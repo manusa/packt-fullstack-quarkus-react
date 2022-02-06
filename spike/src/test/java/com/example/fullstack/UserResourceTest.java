@@ -1,0 +1,79 @@
+package com.example.fullstack;
+
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
+
+@QuarkusTest
+class UserResourceTest {
+  @Test
+  void list() {
+    given()
+      .when().get("/users")
+      .then()
+      .statusCode(200)
+      .body("$.size()", greaterThanOrEqualTo(1),
+        "[0].name", is("admin"),
+        "[0].password", nullValue());
+  }
+
+  @Test
+  void create() {
+    given()
+      .body("{\"name\":\"test\",\"password\":\"test\",\"roles\":[\"user\"]}")
+      .contentType(ContentType.JSON)
+      .when().post("/users")
+      .then()
+      .statusCode(201)
+      .body(
+        "name", is("test"),
+        "created", not(emptyString())
+      );
+  }
+
+  @Test
+  void get() {
+    given()
+      .when().get("/users/0")
+      .then()
+      .statusCode(200)
+      .body("name", is("admin"));
+  }
+
+  @Test
+  void update() {
+    var user = given()
+      .body("{\"name\":\"to-update\",\"password\":\"test\",\"roles\":[\"user\"]}")
+      .contentType(ContentType.JSON)
+      .when().post("/users")
+      .then().extract().as(User.class);
+    user.roles = Collections.singletonList("updated");
+    given()
+      .body(user)
+      .contentType(ContentType.JSON)
+      .when().put("/users/"+ user.id)
+      .then()
+      .statusCode(200)
+      .body("name", is("to-update"));
+
+  }
+
+  @Test
+  void updateOptimisticLock() {
+    given()
+      .body("{}")
+      .contentType(ContentType.JSON)
+      .when().put("/users/0")
+      .then()
+      .statusCode(409);
+  }
+}
