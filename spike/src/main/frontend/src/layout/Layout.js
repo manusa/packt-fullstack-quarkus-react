@@ -1,17 +1,20 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   Box, Toolbar
 } from '@mui/material';
+import {toggleDrawer} from './redux';
 import {TopBar} from './TopBar';
 import {MainDrawer} from './MainDrawer';
 
 export const Layout = ({children}) => {
-  const [drawerOpen, setDrawerOpen] = useState(true);
-  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+  const drawerOpen = useSelector(state => state.layout.drawerOpen);
+  const dispatch = useDispatch();
+  const doToggleDrawer = () => dispatch(toggleDrawer());
   return (
     <Box sx={{display: 'flex'}}>
-      <TopBar toggleDrawer={toggleDrawer} drawerOpen={drawerOpen} />
-      <MainDrawer toggleDrawer={toggleDrawer} drawerOpen={drawerOpen} />
+      <TopBar toggleDrawer={doToggleDrawer} drawerOpen={drawerOpen} />
+      <MainDrawer toggleDrawer={doToggleDrawer} drawerOpen={drawerOpen} />
       <Box>
         <Toolbar />
         <Box component='main'>
