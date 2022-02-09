@@ -1,19 +1,34 @@
 import React from 'react';
-import {Container, Paper, Typography} from '@mui/material';
+import {Container, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography} from '@mui/material';
+import {api} from './api';
 import {Layout} from '../layout';
-import {userApi} from './api';
 
 export const Users = () => {
-  const {data} = userApi.endpoints.getUsers.useQuery(undefined, {pollingInterval: 10000});
+  const {data} = api.endpoints.getUsers.useQuery(undefined, {pollingInterval: 10000});
   return <Layout>
     <Container sx={{mt: theme => theme.spacing(2)}}>
-      <Paper>
+      <Paper sx={{p: 2}}>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
           Users
         </Typography>
-        <ul>
-          {data && data.map(user => <li key={user.id}>{user.name}</li>)}
-        </ul>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Created</TableCell>
+              <TableCell>Roles</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data && data.map(user =>
+              <TableRow key={user.id}>
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{new Date(user.created).toLocaleDateString()}</TableCell>
+                <TableCell>{user.roles.join(', ')}</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </Paper>
     </Container>
   </Layout>;

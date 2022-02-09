@@ -1,7 +1,7 @@
 import React from 'react';
 import {Layout} from './layout';
 import {Button, Container, Paper, Typography} from '@mui/material';
-import {userApi} from './users/api';
+import {api as userApi} from './users';
 
 export const Home = () => {
   const [trigger, {data}] = userApi.endpoints.getUsers.useLazyQuery();

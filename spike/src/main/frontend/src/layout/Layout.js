@@ -15,7 +15,7 @@ export const Layout = ({children}) => {
     <Box sx={{display: 'flex'}}>
       <TopBar toggleDrawer={doToggleDrawer} drawerOpen={drawerOpen} />
       <MainDrawer toggleDrawer={doToggleDrawer} drawerOpen={drawerOpen} />
-      <Box>
+      <Box sx={{flex: 1}}>
         <Toolbar />
         <Box component='main'>
           {children}

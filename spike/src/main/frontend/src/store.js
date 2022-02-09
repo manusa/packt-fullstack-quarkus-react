@@ -1,6 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {reducer as layoutReducer} from './layout';
-import {userApi} from './users/api';
+import {api as userApi} from './users';
 
 export const store = configureStore({
   reducer: {
