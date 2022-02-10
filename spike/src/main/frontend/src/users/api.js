@@ -1,16 +1,18 @@
-import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+import {createApi} from '@reduxjs/toolkit/query/react';
+import {authBaseQuery} from '../auth';
 
 export const api = createApi({
   reducerPath: 'users',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/users`,
-  }),
+  baseQuery: authBaseQuery({path: 'users'}),
   endpoints: builder => ({
     getUser: builder.query({
       query: id => `/${id}`
     }),
     getUsers: builder.query({
       query: () => '/'
+    }),
+    getSelf: builder.query({
+      query: () => '/self'
     }),
   })
 })
