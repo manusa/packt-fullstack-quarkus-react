@@ -83,4 +83,14 @@ class UserResourceTest {
       .then()
       .statusCode(409);
   }
+
+  @Test
+  @TestSecurity(user = "admin", roles = "user")
+  void getCurrentUser() {
+    given()
+      .when().get("/users/self")
+      .then()
+      .statusCode(200)
+      .body("name", is("admin"));
+  }
 }

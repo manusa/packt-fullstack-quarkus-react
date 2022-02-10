@@ -1,13 +1,23 @@
 package com.example.fullstack;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
+import io.smallrye.jwt.build.Jwt;
 import io.smallrye.mutiny.Uni;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.List;
 
 @ApplicationScoped
 public class UserService {
+
+  private final JsonWebToken jwt;
+
+  @Inject
+  public UserService(JsonWebToken jwt) {
+    this.jwt = jwt;
+  }
 
   Uni<List<User>> list() {
     return User.listAll();
@@ -36,5 +46,9 @@ public class UserService {
         return User.getSession();
       })
       .chain(s -> s.merge(user));
+  }
+
+  Uni<User> getCurrentUser() {
+    return findByName(jwt.getName());
   }
 }
