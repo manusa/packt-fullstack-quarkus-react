@@ -18,12 +18,20 @@ public class UserService {
     return user.persistAndFlush();
   }
 
-  Uni<User> get(long id) {
+  Uni<User> findById(long id) {
     return User.findById(id);
   }
 
+  Uni<User> findByName(String name) {
+    return User.find("name", name).firstResult();
+  }
+
+  static boolean matches(User user, String password) {
+    return BcryptUtil.matches(password, user.password);
+  }
+
   Uni<User> update(User user) {
-    return get(user.id).chain(u -> {
+    return findById(user.id).chain(u -> {
         user.password = u.password;
         return User.getSession();
       })

@@ -4,6 +4,7 @@ import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactiona
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.ResponseStatus;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Path("/users")
+@RolesAllowed("admin")
 public class UserResource {
 
   private final UserService userService;
@@ -40,7 +42,7 @@ public class UserResource {
   @GET
   @Path("{id}")
   public Uni<User> get(@PathParam("id") long id) {
-    return userService.get(id);
+    return userService.findById(id);
   }
 
   @PUT

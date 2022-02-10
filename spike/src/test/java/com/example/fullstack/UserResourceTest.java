@@ -1,6 +1,7 @@
 package com.example.fullstack;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,9 @@ import static org.hamcrest.Matchers.not;
 
 @QuarkusTest
 class UserResourceTest {
+
   @Test
+  @TestSecurity(user = "admin", roles = "admin")
   void list() {
     given()
       .when().get("/users")
@@ -27,6 +30,7 @@ class UserResourceTest {
   }
 
   @Test
+  @TestSecurity(user = "admin", roles = "admin")
   void create() {
     given()
       .body("{\"name\":\"test\",\"password\":\"test\",\"roles\":[\"user\"]}")
@@ -41,6 +45,7 @@ class UserResourceTest {
   }
 
   @Test
+  @TestSecurity(user = "admin", roles = "admin")
   void get() {
     given()
       .when().get("/users/0")
@@ -50,6 +55,7 @@ class UserResourceTest {
   }
 
   @Test
+  @TestSecurity(user = "admin", roles = "admin")
   void update() {
     var user = given()
       .body("{\"name\":\"to-update\",\"password\":\"test\",\"roles\":[\"user\"]}")
@@ -68,6 +74,7 @@ class UserResourceTest {
   }
 
   @Test
+  @TestSecurity(user = "admin", roles = "admin")
   void updateOptimisticLock() {
     given()
       .body("{}")
