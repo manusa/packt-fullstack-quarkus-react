@@ -1,8 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Tooltip} from '@mui/material';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CheckIcon from '@mui/icons-material/Check';
+import InboxIcon from '@mui/icons-material/Inbox';
 import PersonIcon from '@mui/icons-material/Person';
 import {HasRole} from '../auth';
 
@@ -29,8 +29,8 @@ export const MainDrawer = ({drawerOpen, toggleDrawer}) => (
   >
     <Toolbar />
     <List>
-      <Item Icon={CalendarTodayIcon} title='Today' to='/today' />
-      <Item Icon={CheckIcon} title='Completed tasks' to='/completed-tasks'/>
+      <Item Icon={InboxIcon} title='Todo' to='/tasks' />
+      <Item Icon={CheckIcon} title='Completed' to='/tasks/completed'/>
       <HasRole role='admin'>
         <Item Icon={PersonIcon} title='Users'  to='/users' />
       </HasRole>

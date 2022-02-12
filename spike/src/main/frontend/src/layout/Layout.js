@@ -4,12 +4,14 @@ import {useNavigate} from 'react-router-dom';
 import {
   Box, Toolbar
 } from '@mui/material';
-import {toggleDrawer} from './redux';
+import {newTask, toggleDrawer} from './';
 import {TopBar} from './TopBar';
 import {MainDrawer} from './MainDrawer';
+import {EditTask} from '../tasks';
 
 export const Layout = ({children}) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const jwt = useSelector(state => state.auth.jwt);
   useEffect(() => {
     if (!jwt) {
@@ -17,11 +19,14 @@ export const Layout = ({children}) => {
     }
   }, [navigate, jwt]);
   const drawerOpen = useSelector(state => state.layout.drawerOpen);
-  const dispatch = useDispatch();
   const doToggleDrawer = () => dispatch(toggleDrawer());
   return (
     <Box sx={{display: 'flex'}}>
-      <TopBar toggleDrawer={doToggleDrawer} drawerOpen={drawerOpen} />
+      <TopBar
+        goHome={() => navigate('/')}
+        newTask={() => dispatch(newTask())}
+        toggleDrawer={doToggleDrawer} drawerOpen={drawerOpen}
+      />
       <MainDrawer toggleDrawer={doToggleDrawer} drawerOpen={drawerOpen} />
       <Box sx={{flex: 1}}>
         <Toolbar />
@@ -29,6 +34,7 @@ export const Layout = ({children}) => {
           {children}
         </Box>
       </Box>
+      <EditTask />
     </Box>
   );
 };

@@ -3,14 +3,21 @@ import {createSlice} from '@reduxjs/toolkit';
 const layoutSlice = createSlice({
   name: 'layout',
   initialState: {
-    drawerOpen: true
+    drawerOpen: true,
+    openTask: undefined
   },
   reducers: {
+    newTask: (state) => {
+      state.openTask = {};
+    },
+    clearOpenTask: (state) => {
+      state.openTask = undefined;
+    },
     toggleDrawer: (state) => {
       state.drawerOpen = !state.drawerOpen;
     }
   }
 });
 
-export const {toggleDrawer} = layoutSlice.actions;
+export const {clearOpenTask, newTask, toggleDrawer} = layoutSlice.actions;
 export const {reducer} = layoutSlice;

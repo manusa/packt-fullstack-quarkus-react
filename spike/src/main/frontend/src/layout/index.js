@@ -1,2 +1,2 @@
 export {Layout} from './Layout';
-export {reducer, toggleDrawer} from './redux';
+export {reducer, clearOpenTask, newTask, toggleDrawer} from './redux';
