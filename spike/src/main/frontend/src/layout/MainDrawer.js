@@ -4,6 +4,7 @@ import {Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Tooltip} fr
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CheckIcon from '@mui/icons-material/Check';
 import PersonIcon from '@mui/icons-material/Person';
+import {HasRole} from '../auth';
 
 const Item = ({Icon, title, to}) => (
   <ListItem button component={Link} to={to}>
@@ -30,7 +31,9 @@ export const MainDrawer = ({drawerOpen, toggleDrawer}) => (
     <List>
       <Item Icon={CalendarTodayIcon} title='Today' to='/today' />
       <Item Icon={CheckIcon} title='Completed tasks' to='/completed-tasks'/>
-      <Item Icon={PersonIcon} title='Users'  to='/users' />
+      <HasRole role='admin'>
+        <Item Icon={PersonIcon} title='Users'  to='/users' />
+      </HasRole>
     </List>
   </Drawer>
 );
