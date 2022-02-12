@@ -15,7 +15,7 @@ export const Layout = ({children}) => {
     if (!jwt) {
       navigate('/login');
     }
-  }, [jwt]);
+  }, [navigate, jwt]);
   const drawerOpen = useSelector(state => state.layout.drawerOpen);
   const dispatch = useDispatch();
   const doToggleDrawer = () => dispatch(toggleDrawer());
