@@ -12,7 +12,8 @@ export const login = createAsyncThunk(
       body: JSON.stringify({name, password}),
     });
     if (!response.ok) {
-      return thunkAPI.rejectWithValue(response.data);
+      return thunkAPI.rejectWithValue({
+        status: response.status, statusText: response.statusText, data: response.data});
     }
     return response.text();
   }
