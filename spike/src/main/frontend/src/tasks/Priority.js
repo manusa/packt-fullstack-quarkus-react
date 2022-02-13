@@ -13,7 +13,7 @@ export const Priority = ({priority}) => Boolean(priority) ?
   <FlagIcon color={colorMap[priority]}/> :
   <FlagOutlinedIcon/>;
 
-export const EditPriority = ({priority, setPriority}) => {
+export const EditPriority = ({priority, setPriority, disabled}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuOpen = Boolean(anchorEl);
   const onClick = val => () => {
@@ -22,7 +22,10 @@ export const EditPriority = ({priority, setPriority}) => {
   }
   return (
     <>
-      <IconButton onClick={event => setAnchorEl(event.currentTarget)}>
+      <IconButton
+        disabled={disabled}
+        onClick={event => setAnchorEl(event.currentTarget)}
+      >
         <Priority priority={priority} />
       </IconButton>
       <Menu

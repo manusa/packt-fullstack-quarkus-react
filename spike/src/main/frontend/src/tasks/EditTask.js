@@ -15,10 +15,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import {EditPriority} from './Priority';
 import {api} from './api';
 import {clearOpenTask, setOpenTask} from '../layout';
+import {CompleteChip} from './CompleteChip';
 
 export const EditTask = () => {
   const dispatch = useDispatch();
   const openTask = useSelector(state => state.layout.openTask);
+  const isNew = openTask && !Boolean(openTask.id);
+  const isComplete = openTask && Boolean(openTask.complete);
   const dialogOpen = Boolean(openTask);
   const close = () => dispatch(clearOpenTask());
   const [addTask] = api.endpoints.addTask.useMutation();
@@ -26,7 +29,7 @@ export const EditTask = () => {
   const save = event => {
     event.preventDefault();
     if (event.currentTarget.checkValidity()) {
-      const operation = Boolean(openTask.id) ? updateTask : addTask
+      const operation = isNew ? addTask: updateTask;
       operation(openTask).then(({error}) => {
         if (!Boolean(error)) {
           close();
@@ -63,9 +66,9 @@ export const EditTask = () => {
                 <CloseIcon />
               </IconButton>
               <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
-                New Task
+                {isNew ? 'New Task' : 'Edit Task'}
               </Typography>
-              <Button type='submit' color='inherit'>
+              <Button type='submit' color='inherit' disabled={isComplete}>
                 save
               </Button>
             </Toolbar>
@@ -82,6 +85,9 @@ export const EditTask = () => {
                 error={Boolean(invalid.title)}
                 required
                 autoFocus
+                inputProps={{
+                  readOnly: isComplete
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -90,17 +96,24 @@ export const EditTask = () => {
                 margin='normal'
                 label='Description'
                 name='description'
-                value={openTask.description}
+                value={openTask.description ?? ''}
                 onChange={onChange}
                 error={Boolean(invalid.description)}
                 multiline
                 rows={4}
-                inputProps={{maxlength: 1000}}
+                inputProps={{
+                  readOnly: isComplete,
+                  maxlength: 1000
+              }}
               />
             </Grid>
             <Grid container justifyContent='flex-end'>
               <Grid item>
-                <EditPriority priority={openTask.priority} setPriority={setPriority} />
+                <CompleteChip task={openTask} />
+                <EditPriority
+                  disabled={isComplete}
+                  priority={openTask.priority} setPriority={setPriority}
+                />
               </Grid>
             </Grid>
           </Grid>

@@ -33,7 +33,7 @@ public class AuthService {
         return Jwt.issuer(issuer)
           .upn(user.name)
           .groups(new HashSet<>(user.roles))
-          .expiresIn(Duration.ofHours(6L))
+          .expiresIn(Duration.ofHours(1L))
           .sign();
       });
   }

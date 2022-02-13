@@ -28,7 +28,7 @@ const taskSort = (t1, t2) => {
   return t1.id - t2.id;
 };
 
-export const Tasks = () => {
+export const Tasks = ({title = 'Tasks', filter = () => true}) => {
   const dispatch = useDispatch();
   const {data} = api.endpoints.getTasks.useQuery(undefined, {pollingInterval: 10000});
   const [setComplete] = api.endpoints.setComplete.useMutation();
@@ -36,11 +36,11 @@ export const Tasks = () => {
     <Container sx={{mt: theme => theme.spacing(2)}}>
       <Paper sx={{p: 2}}>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
-          Tasks
+          {title}
         </Typography>
         <Table size='small'>
           <TableBody>
-              {data && Array.from(data).sort(taskSort).map(task =>
+              {data && Array.from(data).filter(filter).sort(taskSort).map(task =>
               <TableRow key={task.id}>
                 <TableCell sx={{width: '2rem'}}>
                   <Checkbox
