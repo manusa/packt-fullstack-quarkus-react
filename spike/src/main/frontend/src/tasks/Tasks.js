@@ -17,6 +17,16 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import {api} from './api';
 import {Layout, newTask} from '../layout';
+import {Priority} from './Priority';
+
+const taskSort = (t1, t2) => {
+  const p1 = t1.priority ?? Number.MAX_SAFE_INTEGER;
+  const p2 = t2.priority ?? Number.MAX_SAFE_INTEGER;
+  if (p1 !== p2) {
+    return p1 - p2
+  }
+  return t1.id - t2.id;
+};
 
 export const Tasks = () => {
   const dispatch = useDispatch();
@@ -30,7 +40,7 @@ export const Tasks = () => {
         </Typography>
         <Table size='small'>
           <TableBody>
-            {data && Array.from(data).sort((a, b) => a.id - b.id).map(task =>
+              {data && Array.from(data).sort(taskSort).map(task =>
               <TableRow key={task.id}>
                 <TableCell sx={{width: '2rem'}}>
                   <Checkbox
@@ -40,7 +50,16 @@ export const Tasks = () => {
                     onChange={() => setComplete({task, complete: !Boolean(task.complete)})}
                   />
                 </TableCell>
-                <TableCell>{task.title}</TableCell>
+                <TableCell>
+                  <Box sx={{display: 'flex', alignItems: 'center'}}>
+                    <Box sx={{flex: 1}}>
+                      {task.title}
+                    </Box>
+                    <Box>
+                      {Boolean(task.priority) && <Priority priority={task.priority} />}
+                    </Box>
+                  </Box>
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

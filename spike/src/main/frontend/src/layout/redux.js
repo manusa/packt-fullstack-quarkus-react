@@ -13,11 +13,14 @@ const layoutSlice = createSlice({
     clearOpenTask: (state) => {
       state.openTask = undefined;
     },
+    setOpenTask: (state, action) => {
+      state.openTask = action.payload;
+    },
     toggleDrawer: (state) => {
       state.drawerOpen = !state.drawerOpen;
     }
   }
 });
 
-export const {clearOpenTask, newTask, toggleDrawer} = layoutSlice.actions;
+export const {clearOpenTask, newTask, setOpenTask, toggleDrawer} = layoutSlice.actions;
 export const {reducer} = layoutSlice;
