@@ -1,5 +1,6 @@
 package com.example.fullstack;
 
+import io.quarkus.security.UnauthorizedException;
 import io.smallrye.mutiny.Uni;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,6 +18,10 @@ public class TaskService {
     this.userService = userService;
   }
 
+  Uni<Task> findById(long id) {
+    return Task.findById(id);
+  }
+
   public Uni<List<Task>> listForUser() {
     return userService.getCurrentUser()
       .chain(user -> Task.find("user", user).list());
@@ -30,8 +35,20 @@ public class TaskService {
       });
   }
 
+  public Uni<Task> update(Task task) {
+    return userService.getCurrentUser()
+      .chain(user -> findById(task.id)
+        .chain(t -> {
+          if (!user.equals(t.user)) {
+            throw new UnauthorizedException("You are not allowed to update this task");
+          }
+          return Task.getSession();
+        })
+        .chain(s -> s.merge(task)));
+  }
+
   public Uni<Boolean> setComplete(long id, boolean complete) {
-    return Task.<Task>findById(id)
+    return findById(id)
       .chain(task -> {
         task.complete = complete ? ZonedDateTime.now() : null;
         return task.persistAndFlush();

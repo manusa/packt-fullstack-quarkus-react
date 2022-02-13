@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import {api} from './api';
-import {Layout, newTask} from '../layout';
+import {Layout, newTask, setOpenTask} from '../layout';
 import {Priority} from './Priority';
 
 const taskSort = (t1, t2) => {
@@ -50,7 +50,10 @@ export const Tasks = () => {
                     onChange={() => setComplete({task, complete: !Boolean(task.complete)})}
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell
+                  onClick={() => dispatch(setOpenTask(task))}
+                  sx={{cursor: 'pointer'}}
+                >
                   <Box sx={{display: 'flex', alignItems: 'center'}}>
                     <Box sx={{flex: 1}}>
                       {task.title}

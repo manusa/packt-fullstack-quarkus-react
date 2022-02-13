@@ -40,6 +40,15 @@ public class TaskResource {
   }
 
   @PUT
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Path("/{id}")
+  @ReactiveTransactional
+  public Uni<Task> update(@PathParam("id") long id, Task task) {
+    task.id = id;
+    return taskService.update(task);
+  }
+
+  @PUT
   @Path("/{id}/complete")
   @ReactiveTransactional
   public Uni<Boolean> setComplete(@PathParam("id") long id, boolean complete) {

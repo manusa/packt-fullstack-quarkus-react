@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   AppBar,
@@ -15,9 +15,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import {EditPriority} from './Priority';
 import {api} from './api';
 import {clearOpenTask, setOpenTask} from '../layout';
-import {logout} from '../auth';
-import LogoutIcon from '@mui/icons-material/Logout';
-
 
 export const EditTask = () => {
   const dispatch = useDispatch();
@@ -25,16 +22,25 @@ export const EditTask = () => {
   const dialogOpen = Boolean(openTask);
   const close = () => dispatch(clearOpenTask());
   const [addTask] = api.endpoints.addTask.useMutation();
+  const [updateTask] = api.endpoints.updateTask.useMutation();
   const save = event => {
     event.preventDefault();
-    if (event.currentTarget.reportValidity()) {
-      addTask(openTask).then(close);
+    if (event.currentTarget.checkValidity()) {
+      const operation = Boolean(openTask.id) ? updateTask : addTask
+      operation(openTask).then(({error}) => {
+        if (!Boolean(error)) {
+          close();
+        } else {
+          console.log(error);
+        }
+      });
     }
   };
+  const [invalid, setInvalid] = useState( {});
   const onChange = event => {
     const {name, value} = event.currentTarget;
-    dispatch(setOpenTask({
-      ...openTask,
+    setInvalid({...invalid, [name]: !event.currentTarget.checkValidity()});
+    dispatch(setOpenTask({...openTask,
       [name]: value,
     }));
   };
@@ -73,6 +79,7 @@ export const EditTask = () => {
                 name='title'
                 value={openTask.title}
                 onChange={onChange}
+                error={Boolean(invalid.title)}
                 required
                 autoFocus
               />
@@ -85,8 +92,10 @@ export const EditTask = () => {
                 name='description'
                 value={openTask.description}
                 onChange={onChange}
+                error={Boolean(invalid.description)}
                 multiline
                 rows={4}
+                inputProps={{maxlength: 1000}}
               />
             </Grid>
             <Grid container justifyContent='flex-end'>
