@@ -1,5 +1,6 @@
 package com.example.fullstack;
 
+import com.example.fullstack.user.UserService;
 import io.quarkus.security.AuthenticationFailedException;
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.mutiny.Uni;

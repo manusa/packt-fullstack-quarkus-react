@@ -1,10 +1,12 @@
-package com.example.fullstack;
+package com.example.fullstack.user;
 
+import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Collections;
 
 import static io.restassured.RestAssured.given;
@@ -13,6 +15,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 class UserResourceTest {
@@ -92,5 +95,19 @@ class UserResourceTest {
       .then()
       .statusCode(200)
       .body("name", is("admin"));
+  }
+
+  @Test
+  @TestSecurity(user = "admin", roles = "user")
+  void changePassword() {
+    given()
+      .body("{\"currentPassword\": \"quarkus\", \"newPassword\": \"changed\"}")
+      .contentType(ContentType.JSON)
+      .when().put("/users/self/password")
+      .then()
+      .statusCode(200);
+    assertTrue(BcryptUtil.matches("changed",
+        User.<User>findById(0L).await().atMost(Duration.ofSeconds(1)).password)
+    );
   }
 }

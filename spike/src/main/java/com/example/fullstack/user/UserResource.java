@@ -1,4 +1,4 @@
-package com.example.fullstack;
+package com.example.fullstack.user;
 
 import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;
 import io.smallrye.mutiny.Uni;
@@ -40,13 +40,6 @@ public class UserResource {
   }
 
   @GET
-  @Path("self")
-  @RolesAllowed("user")
-  public Uni<User> getCurrentUser() {
-    return userService.getCurrentUser();
-  }
-
-  @GET
   @Path("{id}")
   public Uni<User> get(@PathParam("id") long id) {
     return userService.findById(id);
@@ -58,6 +51,22 @@ public class UserResource {
   public Uni<User> update(@PathParam("id") long id, User user) {
     user.id = id;
     return userService.update(user);
+  }
+  @GET
+  @Path("self")
+  @RolesAllowed("user")
+  public Uni<User> getCurrentUser() {
+    return userService.getCurrentUser();
+  }
+
+
+  @PUT
+  @Path("self/password")
+  @RolesAllowed("user")
+  @ReactiveTransactional
+  public Uni<User> changePassword(PasswordChange passwordChange) {
+    return userService
+      .changePassword(passwordChange.currentPassword(), passwordChange.newPassword());
   }
 
 }

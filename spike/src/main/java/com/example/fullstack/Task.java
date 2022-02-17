@@ -1,5 +1,6 @@
 package com.example.fullstack;
 
+import com.example.fullstack.user.User;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import org.hibernate.annotations.CreationTimestamp;
 

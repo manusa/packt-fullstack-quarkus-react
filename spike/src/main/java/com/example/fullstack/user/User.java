@@ -1,9 +1,8 @@
-package com.example.fullstack;
+package com.example.fullstack.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -32,7 +31,6 @@ public class User extends PanacheEntity {
 
     @Version
     public int version;
-
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "id"))

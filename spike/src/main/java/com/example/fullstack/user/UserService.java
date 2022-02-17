@@ -1,4 +1,4 @@
-package com.example.fullstack;
+package com.example.fullstack.user;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.mutiny.Uni;
@@ -31,23 +31,34 @@ public class UserService {
     return User.findById(id);
   }
 
-  Uni<User> findByName(String name) {
+  public Uni<User> findByName(String name) {
     return User.find("name", name).firstResult();
   }
 
-  static boolean matches(User user, String password) {
+  public static boolean matches(User user, String password) {
     return BcryptUtil.matches(password, user.password);
   }
 
   Uni<User> update(User user) {
     return findById(user.id).chain(u -> {
-        user.password = u.password;
+        user.setPassword(u.password);
         return User.getSession();
       })
       .chain(s -> s.merge(user));
   }
 
-  Uni<User> getCurrentUser() {
+  public Uni<User> getCurrentUser() {
     return findByName(jwt.getName());
+  }
+
+  public Uni<User> changePassword(String currentPassword, String newPassword) {
+    return getCurrentUser()
+      .chain(u -> {
+        if (!matches(u, currentPassword)) {
+          throw new IllegalArgumentException("Current password does not match");
+        }
+        u.setPassword(BcryptUtil.bcryptHash(newPassword));
+        return u.persistAndFlush();
+      });
   }
 }
