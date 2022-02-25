@@ -15,7 +15,16 @@ public class ReactiveGreetingResourceTest {
           .when().get("/hello")
           .then()
              .statusCode(200)
-             .body(is("Hello RESTEasy Reactive"));
+             .body(is("Hello Quarkus live coding!"));
+    }
+
+    @Test
+    public void testHelloWorldEndpoint() {
+        given()
+          .when().get("/hello/world")
+          .then()
+          .statusCode(200)
+          .body(is("Hello world!"));
     }
 
 }

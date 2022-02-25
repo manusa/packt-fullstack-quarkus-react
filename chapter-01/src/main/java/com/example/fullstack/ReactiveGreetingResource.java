@@ -11,6 +11,14 @@ public class ReactiveGreetingResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
-        return "Hello RESTEasy Reactive";
+        return "Hello Quarkus live coding!";
     }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/world")
+    public String helloWorld() {
+        return "Hello world!";
+    }
+
 }
