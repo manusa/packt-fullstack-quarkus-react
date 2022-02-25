@@ -14,5 +14,12 @@ export const api = createApi({
     getSelf: builder.query({
       query: () => '/self'
     }),
+    changePassword: builder.mutation({
+      query: passwordChange => ({
+        url: `/self/password`,
+        method: 'PUT',
+        body: passwordChange
+      })
+    })
   })
 });

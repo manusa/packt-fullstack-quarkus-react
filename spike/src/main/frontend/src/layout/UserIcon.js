@@ -2,13 +2,17 @@ import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {IconButton, ListItemIcon, Menu, MenuItem, Tooltip} from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import KeyIcon from '@mui/icons-material/Key';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {logout} from '../auth';
 import {api} from '../users';
+import {ChangePasswordDialog} from '../users/ChangePasswordDialog';
+import {openChangePassword} from './redux';
 
 export const UserIcon = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuOpen = Boolean(anchorEl);
+  const closeMenu = () => setAnchorEl(null);
   const dispatch = useDispatch();
   const {data} = api.endpoints.getSelf.useQuery();
   return (
@@ -21,9 +25,18 @@ export const UserIcon = () => {
       <Menu
         anchorEl={anchorEl}
         open={menuOpen}
-        onClose={() => setAnchorEl(null)}
+        onClose={closeMenu}
       >
         {data && <MenuItem>{data.name}</MenuItem>}
+        <MenuItem onClick={() => {
+          dispatch(openChangePassword());
+          closeMenu();
+        }}>
+          <ListItemIcon>
+            <KeyIcon />
+          </ListItemIcon>
+          Change Password
+        </MenuItem>
         <MenuItem onClick={() => dispatch(logout())}>
           <ListItemIcon>
             <LogoutIcon />
@@ -31,6 +44,7 @@ export const UserIcon = () => {
           Logout
         </MenuItem>
       </Menu>
+      <ChangePasswordDialog />
     </>
   );
 };

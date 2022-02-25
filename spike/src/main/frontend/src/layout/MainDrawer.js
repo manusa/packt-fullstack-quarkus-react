@@ -8,7 +8,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import {HasRole} from '../auth';
 
 const Item = ({Icon, title, to}) => {
-  const match = useMatch(to);
+  const match = Boolean(useMatch(to));
   return (
     <ListItem
       button component={Link}

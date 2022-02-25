@@ -6,6 +6,8 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @ApplicationScoped
@@ -55,7 +57,7 @@ public class UserService {
     return getCurrentUser()
       .chain(u -> {
         if (!matches(u, currentPassword)) {
-          throw new IllegalArgumentException("Current password does not match");
+          throw new ClientErrorException("Current password does not match", Response.Status.CONFLICT);
         }
         u.setPassword(BcryptUtil.bcryptHash(newPassword));
         return u.persistAndFlush();
