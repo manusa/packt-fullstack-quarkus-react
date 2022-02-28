@@ -5,6 +5,7 @@ const layoutSlice = createSlice({
   initialState: {
     changePasswordOpen: false,
     drawerOpen: true,
+    newProjectOpen: false,
     openTask: undefined
   },
   reducers: {
@@ -14,8 +15,18 @@ const layoutSlice = createSlice({
     closeChangePassword: state => {
       state.changePasswordOpen = false;
     },
-    newTask: state => {
-      state.openTask = {};
+    openNewProject: state => {
+      state.newProjectOpen = true;
+    },
+    closeNewProject: state => {
+      state.newProjectOpen = false;
+    },
+    newTask: (state, action={}) => {
+      state.openTask = {
+        title: '',
+        description: '',
+        ...action.payload ?? {}
+      };
     },
     clearOpenTask: state => {
       state.openTask = undefined;
@@ -30,6 +41,6 @@ const layoutSlice = createSlice({
 });
 
 export const {
-  openChangePassword, closeChangePassword, clearOpenTask, newTask, setOpenTask, toggleDrawer
+  openChangePassword, closeChangePassword, openNewProject, closeNewProject, clearOpenTask, newTask, setOpenTask, toggleDrawer
 } = layoutSlice.actions;
 export const {reducer} = layoutSlice;

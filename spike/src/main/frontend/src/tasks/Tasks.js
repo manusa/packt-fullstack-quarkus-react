@@ -1,5 +1,6 @@
 import React from 'react';
 import {useDispatch} from 'react-redux';
+import {useParams} from 'react-router-dom';
 import {
   Box,
   Button,
@@ -16,8 +17,10 @@ import AddIcon from '@mui/icons-material/Add';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import {api} from './api';
-import {Layout, newTask, setOpenTask} from '../layout';
 import {Priority} from './Priority';
+import {Layout, newTask, setOpenTask} from '../layout';
+import {api as projectApi} from '../projects';
+import {ProjectChip} from './ProjectChip';
 
 const taskSort = (t1, t2) => {
   const p1 = t1.priority ?? Number.MAX_SAFE_INTEGER;
@@ -29,6 +32,14 @@ const taskSort = (t1, t2) => {
 };
 
 export const Tasks = ({title = 'Tasks', filter = () => true}) => {
+  const {projectId} = useParams();
+  const {project} = projectApi.endpoints.getProjects.useQuery(undefined, {
+    selectFromResult: ({data}) => ({project: data?.find(p => p.id === parseInt(projectId))})
+  });
+  if (Boolean(project)) {
+    title = project?.name;
+    filter = task => task.project?.id === project.id;
+  }
   const dispatch = useDispatch();
   const {data} = api.endpoints.getTasks.useQuery(undefined, {pollingInterval: 10000});
   const [setComplete] = api.endpoints.setComplete.useMutation();
@@ -56,7 +67,7 @@ export const Tasks = ({title = 'Tasks', filter = () => true}) => {
                 >
                   <Box sx={{display: 'flex', alignItems: 'center'}}>
                     <Box sx={{flex: 1}}>
-                      {task.title}
+                      {!Boolean(project) && <ProjectChip task={task} size='small' />} {task.title}
                     </Box>
                     <Box>
                       {Boolean(task.priority) && <Priority priority={task.priority} />}
@@ -68,7 +79,7 @@ export const Tasks = ({title = 'Tasks', filter = () => true}) => {
           </TableBody>
         </Table>
         <Box sx={{mt: 2}}>
-          <Button startIcon={<AddIcon />} onClick={() => dispatch(newTask())}>
+          <Button startIcon={<AddIcon />} onClick={() => dispatch(newTask({project: project}))}>
             Add task
           </Button>
         </Box>

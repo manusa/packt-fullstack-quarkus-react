@@ -1,4 +1,4 @@
-package com.example.fullstack;
+package com.example.fullstack.task;
 
 import com.example.fullstack.user.UserService;
 import io.quarkus.security.UnauthorizedException;

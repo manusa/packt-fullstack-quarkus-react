@@ -1,4 +1,4 @@
-package com.example.fullstack;
+package com.example.fullstack.task;
 
 import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;
 import io.smallrye.mutiny.Uni;

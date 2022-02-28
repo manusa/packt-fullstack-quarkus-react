@@ -6,7 +6,6 @@ import KeyIcon from '@mui/icons-material/Key';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {logout} from '../auth';
 import {api} from '../users';
-import {ChangePasswordDialog} from '../users/ChangePasswordDialog';
 import {openChangePassword} from './redux';
 
 export const UserIcon = () => {
@@ -44,7 +43,6 @@ export const UserIcon = () => {
           Logout
         </MenuItem>
       </Menu>
-      <ChangePasswordDialog />
     </>
   );
 };

@@ -1,4 +1,4 @@
-package com.example.fullstack;
+package com.example.fullstack.project;
 
 import com.example.fullstack.user.User;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
@@ -12,21 +12,14 @@ import javax.persistence.Version;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "tasks")
-public class Task extends PanacheEntity {
+@Table(name = "projects")
+public class Project extends PanacheEntity {
 
-  @Column(nullable = false)
-  public String title;
-
-  @Column(length = 1000)
-  public String description;
-
-  public Integer priority;
+  @Column(nullable = false, unique = true)
+  public String name;
 
   @ManyToOne(optional = false)
   public User user;
-
-  public ZonedDateTime complete;
 
   @CreationTimestamp
   @Column(updatable = false, nullable = false)

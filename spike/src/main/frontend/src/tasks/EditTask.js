@@ -4,6 +4,7 @@ import {
   AppBar,
   Box,
   Button,
+  Chip,
   Dialog,
   Grid,
   IconButton,
@@ -12,10 +13,13 @@ import {
   Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import {EditPriority} from './Priority';
 import {api} from './api';
-import {clearOpenTask, setOpenTask} from '../layout';
 import {CompleteChip} from './CompleteChip';
+import {EditPriority} from './Priority';
+import {clearOpenTask, setOpenTask} from '../layout';
+import {SelectProject} from '../projects';
+import {ProjectChip} from './ProjectChip';
+
 
 export const EditTask = () => {
   const dispatch = useDispatch();
@@ -103,13 +107,20 @@ export const EditTask = () => {
                 rows={4}
                 inputProps={{
                   readOnly: isComplete,
-                  maxlength: 1000
+                  maxLength: 1000
               }}
               />
             </Grid>
-            <Grid container justifyContent='flex-end'>
-              <Grid item>
+            <Grid container>
+              <Grid item xs={6}>
                 <CompleteChip task={openTask} />
+                <ProjectChip task={openTask} onDelete={() => dispatch(setOpenTask({...openTask, project: null}))} />
+              </Grid>
+              <Grid item xs={6} display='flex' justifyContent='flex-end'>
+                <SelectProject
+                  disabled={isComplete}
+                  onSelectProject={project => dispatch(setOpenTask({...openTask, project}))}
+                />
                 <EditPriority
                   disabled={isComplete}
                   priority={openTask.priority} setPriority={setPriority}

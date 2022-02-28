@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   Alert,
@@ -14,13 +14,11 @@ import {useForm} from '../useForm';
 import {closeChangePassword} from '../layout';
 import {api} from './';
 
-
-export const ChangePasswordDialog = ({}) => {
-  const {values, invalid, isValid, onChange} = useForm({
+export const ChangePasswordDialog = () => {
+  const {values, invalid, isValid, error, setError, clearForm, onChange} = useForm({
     currentPassword: '',
     newPassword: ''
   });
-  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const changePasswordOpen = useSelector(state => state.layout.changePasswordOpen);
   const close = () => dispatch(closeChangePassword());
@@ -29,11 +27,12 @@ export const ChangePasswordDialog = ({}) => {
   const save = () => {
     changePassword(values).then(({error}) => {
       if (!Boolean(error)) {
+        clearForm();
         close();
       } else if (error?.status === 409) {
-          setError("Current password is incorrect");
+          setError('Current password is incorrect');
       } else {
-        setError("Unknown error, please try again");
+        setError('Unknown error, please try again');
       }
     });
   };
