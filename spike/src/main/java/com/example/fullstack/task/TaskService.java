@@ -20,7 +20,14 @@ public class TaskService {
   }
 
   Uni<Task> findById(long id) {
-    return Task.findById(id);
+    return userService.getCurrentUser()
+      .chain(user -> Task.<Task>findById(id)
+        .chain(task -> {
+          if (!user.equals(task.user)) {
+            throw new UnauthorizedException("You are not allowed to update this task");
+          }
+          return Uni.createFrom().item(task);
+        }));
   }
 
   public Uni<List<Task>> listForUser() {
@@ -37,15 +44,14 @@ public class TaskService {
   }
 
   public Uni<Task> update(Task task) {
-    return userService.getCurrentUser()
-      .chain(user -> findById(task.id)
-        .chain(t -> {
-          if (!user.equals(t.user)) {
-            throw new UnauthorizedException("You are not allowed to update this task");
-          }
-          return Task.getSession();
-        })
-        .chain(s -> s.merge(task)));
+    return findById(task.id)
+      .chain(t -> Task.getSession())
+      .chain(s -> s.merge(task));
+  }
+
+  public Uni<Void> delete(long id) {
+    return findById(id)
+      .chain(Task::delete);
   }
 
   public Uni<Boolean> setComplete(long id, boolean complete) {

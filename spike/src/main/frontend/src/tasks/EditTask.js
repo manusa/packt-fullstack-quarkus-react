@@ -13,6 +13,7 @@ import {
   Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {api} from './api';
 import {CompleteChip} from './CompleteChip';
 import {EditPriority} from './Priority';
@@ -43,6 +44,14 @@ export const EditTask = () => {
       });
     }
   };
+  const [deleteTask] = api.endpoints.deleteTask.useMutation();
+  const doDeleteTask = () => {
+    deleteTask(openTask).then(({error}) => {
+      if (!Boolean(error)) {
+        close();
+      }
+    })
+  }
   const [invalid, setInvalid] = useState( {});
   const onChange = event => {
     const {name, value} = event.currentTarget;
@@ -72,6 +81,14 @@ export const EditTask = () => {
               <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
                 {isNew ? 'New Task' : 'Edit Task'}
               </Typography>
+              <IconButton
+                color='inherit'
+                aria-label='delete'
+                disabled={isComplete}
+                onClick={doDeleteTask}
+              >
+                <DeleteIcon />
+              </IconButton>
               <Button type='submit' color='inherit' disabled={isComplete}>
                 save
               </Button>
