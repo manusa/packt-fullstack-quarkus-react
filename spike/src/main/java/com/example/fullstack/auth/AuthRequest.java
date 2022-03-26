@@ -1,4 +1,4 @@
-package com.example.fullstack;
+package com.example.fullstack.auth;
 
 public class AuthRequest {
   public String name;

@@ -1,4 +1,4 @@
-package com.example.fullstack;
+package com.example.fullstack.auth;
 
 import io.smallrye.mutiny.Uni;
 

@@ -1,4 +1,4 @@
-package com.example.fullstack;
+package com.example.fullstack.auth;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
