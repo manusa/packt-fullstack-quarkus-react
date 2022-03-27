@@ -16,7 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/projects")
+@Path("/api/v1/projects")
 @RolesAllowed("user")
 public class ProjectResource {
 

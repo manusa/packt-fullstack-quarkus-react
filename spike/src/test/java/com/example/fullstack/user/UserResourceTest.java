@@ -6,7 +6,6 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.util.Collections;
 
 import static io.restassured.RestAssured.given;
@@ -24,7 +23,7 @@ class UserResourceTest {
   @TestSecurity(user = "admin", roles = "admin")
   void list() {
     given()
-      .when().get("/users")
+      .when().get("/api/v1/users")
       .then()
       .statusCode(200)
       .body("$.size()", greaterThanOrEqualTo(1),
@@ -38,11 +37,12 @@ class UserResourceTest {
     given()
       .body("{\"name\":\"test\",\"password\":\"test\",\"roles\":[\"user\"]}")
       .contentType(ContentType.JSON)
-      .when().post("/users")
+      .when().post("/api/v1/users")
       .then()
       .statusCode(201)
       .body(
         "name", is("test"),
+        "password", nullValue(),
         "created", not(emptyString())
       );
   }
@@ -51,7 +51,7 @@ class UserResourceTest {
   @TestSecurity(user = "admin", roles = "admin")
   void get() {
     given()
-      .when().get("/users/0")
+      .when().get("/api/v1/users/0")
       .then()
       .statusCode(200)
       .body("name", is("admin"));
@@ -63,13 +63,13 @@ class UserResourceTest {
     var user = given()
       .body("{\"name\":\"to-update\",\"password\":\"test\",\"roles\":[\"user\"]}")
       .contentType(ContentType.JSON)
-      .when().post("/users")
+      .when().post("/api/v1/users")
       .then().extract().as(User.class);
     user.roles = Collections.singletonList("updated");
     given()
       .body(user)
       .contentType(ContentType.JSON)
-      .when().put("/users/"+ user.id)
+      .when().put("/api/v1/users/" + user.id)
       .then()
       .statusCode(200)
       .body("name", is("to-update"));
@@ -82,7 +82,7 @@ class UserResourceTest {
     given()
       .body("{\"name\":\"updated\",\"version\":1337}")
       .contentType(ContentType.JSON)
-      .when().put("/users/0")
+      .when().put("/api/v1/users/0")
       .then()
       .statusCode(409);
   }
@@ -91,7 +91,7 @@ class UserResourceTest {
   @TestSecurity(user = "admin", roles = "user")
   void getCurrentUser() {
     given()
-      .when().get("/users/self")
+      .when().get("/api/v1/users/self")
       .then()
       .statusCode(200)
       .body("name", is("admin"));
@@ -103,11 +103,11 @@ class UserResourceTest {
     given()
       .body("{\"currentPassword\": \"quarkus\", \"newPassword\": \"changed\"}")
       .contentType(ContentType.JSON)
-      .when().put("/users/self/password")
+      .when().put("/api/v1/users/self/password")
       .then()
       .statusCode(200);
     assertTrue(BcryptUtil.matches("changed",
-        User.<User>findById(0L).await().atMost(Duration.ofSeconds(1)).password)
+      User.<User>findById(0L).await().indefinitely().password)
     );
   }
 }

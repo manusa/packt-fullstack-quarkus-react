@@ -16,7 +16,7 @@ class AuthResourceTest {
     given()
       .body("{\"name\":\"admin\",\"password\":\"quarkus\"}")
       .contentType(ContentType.JSON)
-      .when().post("/auth/login")
+      .when().post("/api/v1/auth/login")
       .then()
       .statusCode(200)
       .body(not(emptyString()));
@@ -27,7 +27,7 @@ class AuthResourceTest {
     given()
       .body("{\"name\":\"admin\",\"password\":\"not-quarkus\"}")
       .contentType(ContentType.JSON)
-      .when().post("/auth/login")
+      .when().post("/api/v1/auth/login")
       .then()
       .statusCode(401);
   }

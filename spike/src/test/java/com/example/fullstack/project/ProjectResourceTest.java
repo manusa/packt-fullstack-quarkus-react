@@ -20,7 +20,7 @@ public class ProjectResourceTest {
   @TestSecurity(user = "user", roles = "user")
   void list() {
     given()
-      .when().get("/projects")
+      .when().get("/api/v1/projects")
       .then()
       .statusCode(200)
       .body("$",
@@ -36,7 +36,7 @@ public class ProjectResourceTest {
     given()
       .body("{\"name\":\"project-create\"}")
       .contentType(ContentType.JSON)
-      .when().post("/projects")
+      .when().post("/api/v1/projects")
       .then()
       .statusCode(201)
       .body(
@@ -48,11 +48,11 @@ public class ProjectResourceTest {
   @Test
   @TestSecurity(user = "user", roles = "user")
   void createDuplicate() {
-    var existent = given().body("{\"name\":\"create-existent\"}").contentType(ContentType.JSON).post("/projects")
-      .as(Project.class);
+    var existent = given().body("{\"name\":\"create-existent\"}").contentType(ContentType.JSON)
+      .post("/api/v1/projects").as(Project.class);
     existent.id = null;
     given()
-      .when().contentType(ContentType.JSON).body(existent).post("/projects")
+      .when().contentType(ContentType.JSON).body(existent).post("/api/v1/projects")
       .then()
       .statusCode(409);
   }
@@ -60,11 +60,11 @@ public class ProjectResourceTest {
   @Test
   @TestSecurity(user = "user", roles = "user")
   void update() {
-    var toUpdate = given().body("{\"name\":\"to-update\"}").contentType(ContentType.JSON).post("/projects")
-      .as(Project.class);
+    var toUpdate = given().body("{\"name\":\"to-update\"}").contentType(ContentType.JSON)
+      .post("/api/v1/projects").as(Project.class);
     toUpdate.name = "updated";
     given()
-      .when().contentType(ContentType.JSON).body(toUpdate).put("/projects/" + toUpdate.id)
+      .when().contentType(ContentType.JSON).body(toUpdate).put("/api/v1/projects/" + toUpdate.id)
       .then()
       .statusCode(200)
       .body(
@@ -76,10 +76,10 @@ public class ProjectResourceTest {
   @Test
   @TestSecurity(user = "user", roles = "user")
   void delete() {
-    var toDelete = given().body("{\"name\":\"to-delete\"}").contentType(ContentType.JSON).post("/projects")
-      .as(Project.class);
+    var toDelete = given().body("{\"name\":\"to-delete\"}").contentType(ContentType.JSON)
+      .post("/api/v1/projects").as(Project.class);
     given()
-      .when().delete("/projects/" + toDelete.id)
+      .when().delete("/api/v1/projects/" + toDelete.id)
       .then()
       .statusCode(204);
   }

@@ -16,7 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/tasks")
+@Path("/api/v1/tasks")
 @RolesAllowed("user")
 public class TaskResource {
 

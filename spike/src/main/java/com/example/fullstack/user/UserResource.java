@@ -15,7 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/users")
+@Path("/api/v1/users")
 @RolesAllowed("admin")
 public class UserResource {
 

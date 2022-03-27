@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-@Path("/auth")
+@Path("/api/v1/auth")
 public class AuthResource {
 
   private final AuthService authService;
