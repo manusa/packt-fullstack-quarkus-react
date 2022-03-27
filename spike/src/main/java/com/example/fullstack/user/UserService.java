@@ -1,5 +1,7 @@
 package com.example.fullstack.user;
 
+import com.example.fullstack.project.Project;
+import com.example.fullstack.task.Task;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -47,6 +49,16 @@ public class UserService {
         return User.getSession();
       })
       .chain(s -> s.merge(user));
+  }
+
+  Uni<Void> delete(long id) {
+    return findById(id)
+      .chain(u -> Uni.combine().all().unis(
+          Task.delete("user.id", u.id),
+          Project.delete("user.id", u.id)
+        ).asTuple()
+        .chain(t -> u.delete())
+      );
   }
 
   public Uni<User> getCurrentUser() {

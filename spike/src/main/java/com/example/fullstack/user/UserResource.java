@@ -7,6 +7,7 @@ import org.jboss.resteasy.reactive.ResponseStatus;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -52,6 +53,14 @@ public class UserResource {
     user.id = id;
     return userService.update(user);
   }
+
+  @DELETE
+  @Path("{id}")
+  @ReactiveTransactional
+  public Uni<Void> delete(@PathParam("id") long id) {
+    return userService.delete(id);
+  }
+
   @GET
   @Path("self")
   @RolesAllowed("user")

@@ -11,6 +11,7 @@ import java.util.Collections;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
@@ -85,6 +86,18 @@ class UserResourceTest {
       .when().put("/api/v1/users/0")
       .then()
       .statusCode(409);
+  }
+
+  @Test
+  @TestSecurity(user = "admin", roles = "admin")
+  void delete() {
+    var toDelete = given().body("{\"name\":\"to-delete\",\"password\":\"test\"}").contentType(ContentType.JSON)
+      .post("/api/v1/users").as(User.class);
+    given()
+      .when().delete("/api/v1/users/" + toDelete.id)
+      .then()
+      .statusCode(204);
+    assertThat(User.findById(toDelete.id).await().indefinitely(), nullValue());
   }
 
   @Test
