@@ -1,5 +1,6 @@
 package com.example.fullstack.project;
 
+import com.example.fullstack.task.Task;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
@@ -9,6 +10,8 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.not;
@@ -78,9 +81,13 @@ public class ProjectResourceTest {
   void delete() {
     var toDelete = given().body("{\"name\":\"to-delete\"}").contentType(ContentType.JSON)
       .post("/api/v1/projects").as(Project.class);
+    var dependentTask = given()
+      .body("{\"title\":\"dependent-task\",\"project\":{\"id\":" + toDelete.id + "}}").contentType(ContentType.JSON)
+      .post("/api/v1/tasks").as(Task.class);
     given()
       .when().delete("/api/v1/projects/" + toDelete.id)
       .then()
       .statusCode(204);
+    assertThat(Task.<Task>findById(dependentTask.id).await().indefinitely().project, nullValue());
   }
 }

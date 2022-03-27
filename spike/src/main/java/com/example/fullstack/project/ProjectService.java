@@ -1,5 +1,6 @@
 package com.example.fullstack.project;
 
+import com.example.fullstack.task.Task;
 import com.example.fullstack.user.UserService;
 import io.quarkus.security.UnauthorizedException;
 import io.smallrye.mutiny.Uni;
@@ -50,6 +51,7 @@ public class ProjectService {
 
   public Uni<Void> delete(long id) {
     return findById(id)
-      .chain(Project::delete);
+      .chain(p -> Task.update("project = null where project = ?1", p)
+        .chain(i -> p.delete()));
   }
 }

@@ -68,7 +68,6 @@ public class UserResource {
     return userService.getCurrentUser();
   }
 
-
   @PUT
   @Path("self/password")
   @RolesAllowed("user")
