@@ -22,15 +22,6 @@ public class UserService {
     this.jwt = jwt;
   }
 
-  Uni<List<User>> list() {
-    return User.listAll();
-  }
-
-  Uni<User> create(User user) {
-    user.password = BcryptUtil.bcryptHash(user.password);
-    return user.persistAndFlush();
-  }
-
   Uni<User> findById(long id) {
     return User.findById(id);
   }
@@ -39,8 +30,13 @@ public class UserService {
     return User.find("name", name).firstResult();
   }
 
-  public static boolean matches(User user, String password) {
-    return BcryptUtil.matches(password, user.password);
+  Uni<List<User>> list() {
+    return User.listAll();
+  }
+
+  Uni<User> create(User user) {
+    user.password = BcryptUtil.bcryptHash(user.password);
+    return user.persistAndFlush();
   }
 
   Uni<User> update(User user) {
@@ -74,5 +70,9 @@ public class UserService {
         u.setPassword(BcryptUtil.bcryptHash(newPassword));
         return u.persistAndFlush();
       });
+  }
+
+  public static boolean matches(User user, String password) {
+    return BcryptUtil.matches(password, user.password);
   }
 }
