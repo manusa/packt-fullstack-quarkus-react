@@ -19,7 +19,7 @@ public class TaskService {
     this.userService = userService;
   }
 
-  Uni<Task> findById(long id) {
+  public Uni<Task> findById(long id) {
     return userService.getCurrentUser()
       .chain(user -> Task.<Task>findById(id)
         .chain(task -> {

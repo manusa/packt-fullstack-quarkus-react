@@ -22,7 +22,7 @@ public class UserService {
     this.jwt = jwt;
   }
 
-  Uni<User> findById(long id) {
+  public Uni<User> findById(long id) {
     return User.findById(id);
   }
 
@@ -30,16 +30,16 @@ public class UserService {
     return User.find("name", name).firstResult();
   }
 
-  Uni<List<User>> list() {
+  public Uni<List<User>> list() {
     return User.listAll();
   }
 
-  Uni<User> create(User user) {
+  public Uni<User> create(User user) {
     user.password = BcryptUtil.bcryptHash(user.password);
     return user.persistAndFlush();
   }
 
-  Uni<User> update(User user) {
+  public Uni<User> update(User user) {
     return findById(user.id).chain(u -> {
         user.setPassword(u.password);
         return User.getSession();
@@ -47,7 +47,7 @@ public class UserService {
       .chain(s -> s.merge(user));
   }
 
-  Uni<Void> delete(long id) {
+  public Uni<Void> delete(long id) {
     return findById(id)
       .chain(u -> Uni.combine().all().unis(
           Task.delete("user.id", u.id),

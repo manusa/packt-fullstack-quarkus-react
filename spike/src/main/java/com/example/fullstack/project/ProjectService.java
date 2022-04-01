@@ -19,7 +19,7 @@ public class ProjectService {
     this.userService = userService;
   }
 
-  Uni<Project> findById(long id) {
+  public Uni<Project> findById(long id) {
     return userService.getCurrentUser()
       .chain(user -> Project.<Project>findById(id)
         .chain(project -> {
