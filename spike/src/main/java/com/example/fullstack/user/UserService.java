@@ -52,10 +52,10 @@ public class UserService {
   public Uni<Void> delete(long id) {
     return findById(id)
       .chain(u -> Uni.combine().all().unis(
-          Task.delete("user.id", u.id),
-          Project.delete("user.id", u.id)
-        ).asTuple()
-        .chain(t -> u.delete())
+            Task.delete("user.id", u.id),
+            Project.delete("user.id", u.id)
+          ).asTuple()
+          .chain(t -> u.delete())
       );
   }
 
