@@ -60,6 +60,15 @@ class UserResourceTest {
 
   @Test
   @TestSecurity(user = "admin", roles = "admin")
+  void getNotFound() {
+    given()
+      .when().get("/api/v1/users/1337")
+      .then()
+      .statusCode(404);
+  }
+
+  @Test
+  @TestSecurity(user = "admin", roles = "admin")
   void update() {
     var user = given()
       .body("{\"name\":\"to-update\",\"password\":\"test\",\"roles\":[\"user\"]}")
@@ -86,6 +95,17 @@ class UserResourceTest {
       .when().put("/api/v1/users/0")
       .then()
       .statusCode(409);
+  }
+
+  @Test
+  @TestSecurity(user = "admin", roles = "admin")
+  void updateNotFound() {
+    given()
+      .body("{\"name\":\"i-dont-exist\",\"password\":\"pa33\"}")
+      .contentType(ContentType.JSON)
+      .when().put("/api/v1/users/1337")
+      .then()
+      .statusCode(404);
   }
 
   @Test

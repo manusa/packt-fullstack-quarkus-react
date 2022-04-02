@@ -5,6 +5,7 @@ import com.example.fullstack.task.Task;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.hibernate.ObjectNotFoundException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,7 +24,8 @@ public class UserService {
   }
 
   public Uni<User> findById(long id) {
-    return User.findById(id);
+    return User.<User>findById(id)
+      .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "User"));
   }
 
   public Uni<User> findByName(String name) {

@@ -78,6 +78,17 @@ public class ProjectResourceTest {
 
   @Test
   @TestSecurity(user = "user", roles = "user")
+  void updateNotFound() {
+    given()
+      .body("{\"name\":\"to-update\"}")
+      .contentType(ContentType.JSON)
+      .when().put("/api/v1/projects/1337")
+      .then()
+      .statusCode(404);
+  }
+
+  @Test
+  @TestSecurity(user = "user", roles = "user")
   void delete() {
     var toDelete = given().body("{\"name\":\"to-delete\"}").contentType(ContentType.JSON)
       .post("/api/v1/projects").as(Project.class);

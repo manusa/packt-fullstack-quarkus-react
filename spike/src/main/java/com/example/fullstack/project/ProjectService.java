@@ -4,6 +4,7 @@ import com.example.fullstack.task.Task;
 import com.example.fullstack.user.UserService;
 import io.quarkus.security.UnauthorizedException;
 import io.smallrye.mutiny.Uni;
+import org.hibernate.ObjectNotFoundException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -22,6 +23,7 @@ public class ProjectService {
   public Uni<Project> findById(long id) {
     return userService.getCurrentUser()
       .chain(user -> Project.<Project>findById(id)
+        .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "Project"))
         .chain(project -> {
           if (!user.equals(project.user)) {
             throw new UnauthorizedException("You are not allowed to update this task");

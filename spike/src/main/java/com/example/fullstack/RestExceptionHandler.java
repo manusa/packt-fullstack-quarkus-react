@@ -2,6 +2,7 @@ package com.example.fullstack;
 
 import io.vertx.pgclient.PgException;
 import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.StaleObjectStateException;
 
 import javax.ws.rs.core.Response;
@@ -17,6 +18,9 @@ public class RestExceptionHandler implements ExceptionMapper<HibernateException>
 
   @Override
   public Response toResponse(HibernateException exception) {
+    if (hasExceptionInChain(exception, ObjectNotFoundException.class)) {
+      return Response.status(Response.Status.NOT_FOUND).entity(exception.getMessage()).build();
+    }
     if (hasExceptionInChain(exception, StaleObjectStateException.class)
       || hasPostgresErrorCode(exception, PG_UNIQUE_VIOLATION_ERROR)) {
       return Response.status(Response.Status.CONFLICT).build();
