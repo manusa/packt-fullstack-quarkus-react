@@ -24,11 +24,10 @@ public class TaskService {
     return userService.getCurrentUser()
       .chain(user -> Task.<Task>findById(id)
         .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "Task"))
-        .chain(task -> {
+        .onItem().invoke(task -> {
           if (!user.equals(task.user)) {
             throw new UnauthorizedException("You are not allowed to update this task");
           }
-          return Uni.createFrom().item(task);
         }));
   }
 

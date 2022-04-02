@@ -24,11 +24,10 @@ public class ProjectService {
     return userService.getCurrentUser()
       .chain(user -> Project.<Project>findById(id)
         .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "Project"))
-        .chain(project -> {
+        .onItem().invoke(project -> {
           if (!user.equals(project.user)) {
-            throw new UnauthorizedException("You are not allowed to update this task");
+            throw new UnauthorizedException("You are not allowed to update this project");
           }
-          return Uni.createFrom().item(project);
         }));
   }
 

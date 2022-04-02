@@ -88,6 +88,17 @@ public class ProjectResourceTest {
   }
 
   @Test
+  @TestSecurity(user = "admin", roles = "user")
+  void updateUnauthorized() {
+    given()
+      .body("{\"name\":\"to-update\"}")
+      .contentType(ContentType.JSON)
+      .when().put("/api/v1/projects/0")
+      .then()
+      .statusCode(401);
+  }
+
+  @Test
   @TestSecurity(user = "user", roles = "user")
   void delete() {
     var toDelete = given().body("{\"name\":\"to-delete\"}").contentType(ContentType.JSON)
