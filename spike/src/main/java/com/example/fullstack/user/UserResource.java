@@ -47,6 +47,7 @@ public class UserResource {
   }
 
   @PUT
+  @Consumes(MediaType.APPLICATION_JSON)
   @Path("{id}")
   @ReactiveTransactional
   public Uni<User> update(@PathParam("id") long id, User user) {
