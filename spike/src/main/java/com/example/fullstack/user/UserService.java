@@ -63,6 +63,10 @@ public class UserService {
     return findByName(jwt.getName());
   }
 
+  public static boolean matches(User user, String password) {
+    return BcryptUtil.matches(password, user.password);
+  }
+
   public Uni<User> changePassword(String currentPassword, String newPassword) {
     return getCurrentUser()
       .chain(u -> {
@@ -74,7 +78,4 @@ public class UserService {
       });
   }
 
-  public static boolean matches(User user, String password) {
-    return BcryptUtil.matches(password, user.password);
-  }
 }
