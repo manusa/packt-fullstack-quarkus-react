@@ -1,5 +1,6 @@
 package com.example.fullstack.user;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import org.hibernate.annotations.CreationTimestamp;

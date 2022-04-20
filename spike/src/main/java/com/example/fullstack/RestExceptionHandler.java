@@ -51,3 +51,4 @@ public class RestExceptionHandler implements ExceptionMapper<HibernateException>
     return Optional.empty();
   }
 }
+
