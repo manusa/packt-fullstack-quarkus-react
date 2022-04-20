@@ -50,4 +50,8 @@ public class UserService {
     // TODO: replace implementation once security is added to the project
     return User.find("order by ID").firstResult();
   }
+
+  public static boolean matches(User user, String password) {
+    return BcryptUtil.matches(password, user.password);
+  }
 }
