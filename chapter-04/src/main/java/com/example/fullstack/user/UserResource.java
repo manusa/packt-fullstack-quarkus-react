@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Path("/api/v1/users")
+@RolesAllowed("admin")
 public class UserResource {
 
   private final UserService userService;
@@ -63,6 +64,7 @@ public class UserResource {
 
   @GET
   @Path("self")
+  @RolesAllowed("user")
   public Uni<User> getCurrentUser() {
     return userService.getCurrentUser();
   }
