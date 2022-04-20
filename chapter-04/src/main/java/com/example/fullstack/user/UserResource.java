@@ -4,6 +4,7 @@ import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactiona
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.ResponseStatus;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -64,6 +65,15 @@ public class UserResource {
   @Path("self")
   public Uni<User> getCurrentUser() {
     return userService.getCurrentUser();
+  }
+
+  @PUT
+  @Path("self/password")
+  @RolesAllowed("user")
+  @ReactiveTransactional
+  public Uni<User> changePassword(PasswordChange passwordChange) {
+    return userService
+      .changePassword(passwordChange.currentPassword(), passwordChange.newPassword());
   }
 
 }

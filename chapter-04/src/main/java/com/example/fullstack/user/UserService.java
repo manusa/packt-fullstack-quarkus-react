@@ -9,6 +9,8 @@ import org.hibernate.ObjectNotFoundException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @ApplicationScoped
@@ -40,8 +42,10 @@ public class UserService {
   }
 
   public Uni<User> update(User user) {
-    return findById(user.id)
-      .chain(u -> User.getSession())
+    return findById(user.id).chain(u -> {
+        user.setPassword(u.password);
+        return User.getSession();
+      })
       .chain(s -> s.merge(user));
   }
 
@@ -62,4 +66,16 @@ public class UserService {
   public static boolean matches(User user, String password) {
     return BcryptUtil.matches(password, user.password);
   }
+
+  public Uni<User> changePassword(String currentPassword, String newPassword) {
+    return getCurrentUser()
+      .chain(u -> {
+        if (!matches(u, currentPassword)) {
+          throw new ClientErrorException("Current password does not match", Response.Status.CONFLICT);
+        }
+        u.setPassword(BcryptUtil.bcryptHash(newPassword));
+        return u.persistAndFlush();
+      });
+  }
+
 }
