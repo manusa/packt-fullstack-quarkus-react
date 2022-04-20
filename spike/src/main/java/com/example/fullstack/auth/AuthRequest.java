@@ -1,6 +1,4 @@
 package com.example.fullstack.auth;
 
-public class AuthRequest {
-  public String name;
-  public String password;
+public record AuthRequest(String name, String password) {
 }

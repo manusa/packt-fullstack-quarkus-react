@@ -25,10 +25,10 @@ public class AuthService {
   }
 
   public Uni<String> authenticate(AuthRequest authRequest) {
-    return userService.findByName(authRequest.name)
+    return userService.findByName(authRequest.name())
       .onItem()
       .transform(user -> {
-        if (user == null || !UserService.matches(user, authRequest.password)) {
+        if (user == null || !UserService.matches(user, authRequest.password())) {
           throw new AuthenticationFailedException("Invalid credentials");
         }
         return Jwt.issuer(issuer)
