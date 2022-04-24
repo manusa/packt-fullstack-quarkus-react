@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
@@ -111,8 +111,11 @@ class UserResourceTest {
   @Test
   @TestSecurity(user = "admin", roles = "admin")
   void delete() {
-    var toDelete = given().body("{\"name\":\"to-delete\",\"password\":\"test\"}").contentType(ContentType.JSON)
-      .post("/api/v1/users").as(User.class);
+    var toDelete = given()
+      .body("{\"name\":\"to-delete\",\"password\":\"test\"}")
+      .contentType(ContentType.JSON)
+      .post("/api/v1/users")
+      .as(User.class);
     given()
       .when().delete("/api/v1/users/" + toDelete.id)
       .then()
@@ -142,5 +145,16 @@ class UserResourceTest {
     assertTrue(BcryptUtil.matches("changed",
       User.<User>findById(0L).await().indefinitely().password)
     );
+  }
+
+  @Test
+  @TestSecurity(user = "admin", roles = "user")
+  void changePasswordDoesntMatch() {
+    given()
+      .body("{\"currentPassword\": \"wrong\", \"newPassword\": \"changed\"}")
+      .contentType(ContentType.JSON)
+      .when().put("/api/v1/users/self/password")
+      .then()
+      .statusCode(409);
   }
 }

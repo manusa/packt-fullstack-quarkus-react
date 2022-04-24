@@ -7,17 +7,17 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 @QuarkusTest
-public class ProjectResourceTest {
+class ProjectResourceTest {
 
   @Test
   @TestSecurity(user = "user", roles = "user")
@@ -51,11 +51,14 @@ public class ProjectResourceTest {
   @Test
   @TestSecurity(user = "user", roles = "user")
   void createDuplicate() {
-    var existent = given().body("{\"name\":\"create-existent\"}").contentType(ContentType.JSON)
-      .post("/api/v1/projects").as(Project.class);
-    existent.id = null;
     given()
-      .when().contentType(ContentType.JSON).body(existent).post("/api/v1/projects")
+      .body("{\"name\":\"create-existent\"}")
+      .contentType(ContentType.JSON)
+      .post("/api/v1/projects");
+    given()
+      .body("{\"name\":\"create-existent\"}")
+      .contentType(ContentType.JSON)
+      .when().post("/api/v1/projects")
       .then()
       .statusCode(409);
   }
@@ -67,7 +70,9 @@ public class ProjectResourceTest {
       .post("/api/v1/projects").as(Project.class);
     toUpdate.name = "updated";
     given()
-      .when().contentType(ContentType.JSON).body(toUpdate).put("/api/v1/projects/" + toUpdate.id)
+      .body(toUpdate)
+      .contentType(ContentType.JSON)
+      .when().put("/api/v1/projects/" + toUpdate.id)
       .then()
       .statusCode(200)
       .body(
