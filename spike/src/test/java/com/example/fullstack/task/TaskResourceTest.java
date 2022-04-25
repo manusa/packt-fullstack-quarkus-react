@@ -1,5 +1,6 @@
 package com.example.fullstack.task;
 
+import com.example.fullstack.user.User;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
@@ -84,11 +85,27 @@ class TaskResourceTest {
   @TestSecurity(user = "user", roles = "user")
   void updateNotFound() {
     given()
-      .body("{\"title\":\"to-update\"}")
+      .body("{\"title\":\"updated\"}")
       .contentType(ContentType.JSON)
       .when().put("/api/v1/tasks/1337")
       .then()
       .statusCode(404);
+  }
+
+  @Test
+  @TestSecurity(user = "user", roles = "user")
+  void updateForbidden() {
+    final User admin = User.<User>findById(0L).await().indefinitely();
+    Task adminTask = new Task();
+    adminTask.title = "admins-task";
+    adminTask.user = admin;
+    adminTask = adminTask.<Task>persistAndFlush().await().indefinitely();
+    given()
+      .body("{\"title\":\"to-update\"}")
+      .contentType(ContentType.JSON)
+      .when().put("/api/v1/tasks/" + adminTask.id)
+      .then()
+      .statusCode(401); // TODO: TaskService UnauthorizedException should be changed to ForbiddenException
   }
 
   @Test
