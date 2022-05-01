@@ -5,3 +5,5 @@ INSERT INTO "user_roles" ("id", "role") VALUES (0, 'admin')
     ON CONFLICT DO NOTHING;
 INSERT INTO "user_roles" ("id", "role") VALUES (0, 'user')
     ON CONFLICT DO NOTHING;
+
+ALTER SEQUENCE IF EXISTS hibernate_sequence RESTART WITH 10;
