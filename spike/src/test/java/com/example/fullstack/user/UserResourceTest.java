@@ -6,8 +6,6 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
@@ -49,6 +47,28 @@ class UserResourceTest {
   }
 
   @Test
+  @TestSecurity(user = "user", roles = "user")
+  void createUnauthorized() {
+    given()
+      .body("{\"name\":\"test-unauthorized\",\"password\":\"test\",\"roles\":[\"user\"]}")
+      .contentType(ContentType.JSON)
+      .when().post("/api/v1/users")
+      .then()
+      .statusCode(403);
+  }
+
+  @Test
+  @TestSecurity(user = "admin", roles = "admin")
+  void createDuplicate() {
+    given()
+      .body("{\"name\":\"user\",\"password\":\"test\",\"roles\":[\"user\"]}")
+      .contentType(ContentType.JSON)
+      .when().post("/api/v1/users")
+      .then()
+      .statusCode(409);
+  }
+
+  @Test
   @TestSecurity(user = "admin", roles = "admin")
   void get() {
     given()
@@ -75,15 +95,17 @@ class UserResourceTest {
       .contentType(ContentType.JSON)
       .when().post("/api/v1/users")
       .then().extract().as(User.class);
-    user.roles = Collections.singletonList("updated");
+    user.name = "updated";
     given()
       .body(user)
       .contentType(ContentType.JSON)
       .when().put("/api/v1/users/" + user.id)
       .then()
       .statusCode(200)
-      .body("name", is("to-update"));
-
+      .body(
+        "name", is("updated"),
+        "version", is(user.version + 1)
+      );
   }
 
   @Test
