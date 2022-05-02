@@ -94,7 +94,7 @@ class UserResourceTest {
       .body("{\"name\":\"to-update\",\"password\":\"test\",\"roles\":[\"user\"]}")
       .contentType(ContentType.JSON)
       .when().post("/api/v1/users")
-      .then().extract().as(User.class);
+      .as(User.class);
     user.name = "updated";
     given()
       .body(user)
