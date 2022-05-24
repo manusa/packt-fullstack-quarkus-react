@@ -7,6 +7,7 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Toolbar,
@@ -24,16 +25,13 @@ import {HasRole} from '../auth';
 const Item = ({Icon, iconSize, title, to, disableTooltip=false}) => {
   const match = Boolean(useMatch(to));
   return (
-    <ListItem
-      button component={Link}
-      to={to} selected={match}
-    >
+    <ListItemButton component={Link} to={to} selected={match}>
       {Icon && <Tooltip title={title} placement='right' disableHoverListener={disableTooltip}>
         <ListItemIcon><Icon fontSize={iconSize}/></ListItemIcon>
       </Tooltip>
       }
       <ListItemText primary={title}/>
-    </ListItem>
+    </ListItemButton>
   )
 };
 
