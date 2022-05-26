@@ -4,7 +4,7 @@ import {Login} from './auth';
 import {Tasks} from './tasks';
 import {Users} from './users';
 
-const App = () => (
+export const App = () => (
   <Routes>
     <Route exact path='/' element={<Navigate to='/tasks/pending' />} />
     <Route exact path='/login' element={<Login />} />
@@ -17,5 +17,3 @@ const App = () => (
     <Route exact path='/users' element={<Users />} />
   </Routes>
 );
-
-export default App;
