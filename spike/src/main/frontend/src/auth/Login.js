@@ -1,18 +1,20 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {useNavigate} from 'react-router-dom';
 import {Avatar, Box, Button, Container, Snackbar, TextField, Typography} from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {useDispatch} from 'react-redux';
 import {login} from './redux';
-import {useNavigate} from 'react-router-dom';
+import {useForm} from '../useForm';
 
 export const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const submit = event => {
-    event.preventDefault();
-    if (event.currentTarget.checkValidity()) {
-      const data = new FormData(event.currentTarget);
-      dispatch(login({name: data.get('username'), password: data.get('password')}))
+  const {values, isValid, error, setError, onChange} = useForm({
+    initialValues: {username: '', password: ''}
+  });
+  const sendLogin = () => {
+    if (isValid) {
+      dispatch(login({name: values.username, password: values.password}))
         .then(({meta, payload}) => {
           if (meta.requestStatus === 'fulfilled') {
             navigate('/');
@@ -24,7 +26,6 @@ export const Login = () => {
         });
     }
   };
-  const [error, setError] = useState(null);
   return (
     <Container maxWidth='xs'>
       <Box sx={{mt: theme => theme.spacing(8), display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -34,14 +35,15 @@ export const Login = () => {
         <Typography component='h1' variant='h5'>
           Sign in
         </Typography>
-        <Box component='form' onSubmit={submit} noValidate sx={{ mt: 1 }}>
+        <Box noValidate sx={{ mt: 1 }}>
           <TextField
             margin='normal'
             required
             fullWidth
-            id='username'
-            label='Username'
             name='username'
+            label='Username'
+            onChange={onChange}
+            value={values.username}
             autoFocus
           />
           <TextField
@@ -51,13 +53,15 @@ export const Login = () => {
             name='password'
             label='Password'
             type='password'
-            id='password'
+            onChange={onChange}
+            onKeyDown={e => e.key === 'Enter' && sendLogin()}
+            value={values.password}
           />
           <Button
-            type='submit'
             fullWidth
             variant='contained'
             sx={{ mt: 3, mb: 2 }}
+            onClick={sendLogin}
           >
             Sign In
           </Button>

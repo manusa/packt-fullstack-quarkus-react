@@ -16,7 +16,7 @@ import {api} from './';
 
 export const NewProjectDialog = () => {
   const {values, invalid, isValid, error, setError, clearForm, onChange} = useForm({
-    name: ''
+    initialValues: {name: ''}
   });
   const dispatch = useDispatch();
   const newProjectOpen = useSelector(state => state.layout.newProjectOpen);
@@ -24,8 +24,8 @@ export const NewProjectDialog = () => {
   const [addProject] = api.endpoints.addProject.useMutation();
   const canSave = isValid && Boolean(values.name);
   const save = () => {
-    addProject(values).then(({error}) => {
-      if (!Boolean(error)) {
+    addProject(values).then(({error: saveError}) => {
+      if (!Boolean(saveError)) {
         clearForm();
         close();
       } else {
@@ -49,6 +49,7 @@ export const NewProjectDialog = () => {
           name='name'
           value={values.name}
           onChange={onChange}
+          onKeyDown={e => e.key === 'Enter' && canSave && save()}
           error={Boolean(invalid.name)}
           required
         />
