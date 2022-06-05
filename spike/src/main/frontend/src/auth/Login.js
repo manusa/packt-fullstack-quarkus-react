@@ -36,42 +36,21 @@ export const Login = () => {
           Sign in
         </Typography>
         <Box noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin='normal'
-            required
-            fullWidth
-            name='username'
-            label='Username'
-            onChange={onChange}
-            value={values.username}
-            autoFocus
+          <TextField margin='normal' required fullWidth autoFocus
+            label='Username' name='username' onChange={onChange} value={values.username}
           />
-          <TextField
-            margin='normal'
-            required
-            fullWidth
-            name='password'
-            label='Password'
-            type='password'
-            onChange={onChange}
+          <TextField type='password' margin='normal' required fullWidth
+            label='Password' name='password' onChange={onChange} value={values.password}
             onKeyDown={e => e.key === 'Enter' && sendLogin()}
-            value={values.password}
           />
-          <Button
-            fullWidth
-            variant='contained'
-            sx={{ mt: 3, mb: 2 }}
-            onClick={sendLogin}
-          >
+          <Button fullWidth variant='contained' onClick={sendLogin} sx={{ mt: 3, mb: 2 }}>
             Sign In
           </Button>
         </Box>
       </Box>
       <Snackbar
-        open={Boolean(error)}
-        message={error}
-        autoHideDuration={6000}
-        onClose={() => setError(null)}
+        open={Boolean(error)} message={error}
+        autoHideDuration={6000} onClose={() => setError(null)}
       />
     </Container>
   );
