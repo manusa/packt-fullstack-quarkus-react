@@ -86,7 +86,7 @@ export const MainDrawer = ({drawerOpen, toggleDrawer, openNewProject, projects =
         />
         <HasRole role='admin'>
           <Divider/>
-          <Item Icon={PersonIcon} title='Users' to='/users'/>
+          <Item disableTooltip={drawerOpen} Icon={PersonIcon} title='Users' to='/users'/>
         </HasRole>
       </List>
     </Box>
