@@ -43,30 +43,14 @@ export const ChangePasswordDialog = () => {
           Change your user password.
         </DialogContentText>
         {Boolean(error) && <Alert severity='error'>{error}</Alert>}
-        <TextField
+        <TextField type='password' fullWidth margin='dense' variant='standard' label='Current password'
+          name='currentPassword' value={values.currentPassword} onChange={onChange}
+          required error={Boolean(invalid.currentPassword)}
           autoFocus
-          fullWidth
-          margin='dense'
-          variant='standard'
-          type='password'
-          label='Current password'
-          name='currentPassword'
-          value={values.currentPassword}
-          onChange={onChange}
-          error={Boolean(invalid.currentPassword)}
-          required
         />
-        <TextField
-          fullWidth
-          margin='dense'
-          variant='standard'
-          type='password'
-          label='New password'
-          name='newPassword'
-          value={values.newPassword}
-          onChange={onChange}
-          error={Boolean(invalid.newPassword)}
-          required
+        <TextField type='password' fullWidth margin='dense' variant='standard' label='New password'
+          name='newPassword' value={values.newPassword} onChange={onChange}
+          required error={Boolean(invalid.newPassword)}
         />
       </DialogContent>
       <DialogActions>
