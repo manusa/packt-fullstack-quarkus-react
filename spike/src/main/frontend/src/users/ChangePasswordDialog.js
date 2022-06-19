@@ -16,8 +16,7 @@ import {api} from './';
 
 export const ChangePasswordDialog = () => {
   const {values, invalid, isValid, error, setError, clearForm, onChange} = useForm({
-    currentPassword: '',
-    newPassword: ''
+    initialValues: {currentPassword: '', newPassword: ''}
   });
   const dispatch = useDispatch();
   const changePasswordOpen = useSelector(state => state.layout.changePasswordOpen);
