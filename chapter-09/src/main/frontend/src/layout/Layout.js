@@ -4,9 +4,10 @@ import {useNavigate} from 'react-router-dom';
 import {
   Box, Toolbar
 } from '@mui/material';
-import { toggleDrawer} from './';
+import {toggleDrawer} from './';
 import {TopBar} from './TopBar';
 import {MainDrawer} from './MainDrawer';
+import {ChangePasswordDialog} from '../users';
 
 export const Layout = ({children}) => {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export const Layout = ({children}) => {
           {children}
         </Box>
       </Box>
+      <ChangePasswordDialog />
     </Box>
   );
 };

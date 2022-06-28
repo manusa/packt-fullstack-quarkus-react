@@ -1,9 +1,9 @@
 import React from 'react';
 import {AppBar, IconButton, Toolbar, Tooltip, Typography} from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddIcon from '@mui/icons-material/Add';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
+import {UserIcon} from './UserIcon';
 
 export const TopBar = ({goHome, newTask, toggleDrawer}) => (
   <AppBar
@@ -41,7 +41,7 @@ export const TopBar = ({goHome, newTask, toggleDrawer}) => (
           <AddIcon />
         </IconButton>
       </Tooltip>
-      <AccountCircleIcon />
+      <UserIcon />
     </Toolbar>
   </AppBar>
 );
