@@ -5,6 +5,7 @@ const layoutSlice = createSlice({
   initialState: {
     changePasswordOpen: false,
     drawerOpen: true,
+    newProjectOpen: false,
   },
   reducers: {
     openChangePassword: state => {
@@ -13,6 +14,12 @@ const layoutSlice = createSlice({
     closeChangePassword: state => {
       state.changePasswordOpen = false;
     },
+    openNewProject: state => {
+      state.newProjectOpen = true;
+    },
+    closeNewProject: state => {
+      state.newProjectOpen = false;
+    },
     toggleDrawer: state => {
       state.drawerOpen = !state.drawerOpen;
     }
@@ -20,6 +27,6 @@ const layoutSlice = createSlice({
 });
 
 export const {
-  openChangePassword, closeChangePassword, toggleDrawer
+  openChangePassword, closeChangePassword, toggleDrawer, openNewProject, closeNewProject
 } = layoutSlice.actions;
 export const {reducer} = layoutSlice;
