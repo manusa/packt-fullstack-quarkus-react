@@ -14,6 +14,8 @@ import {
   Tooltip
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import CheckIcon from '@mui/icons-material/Check';
 import CircleIcon from '@mui/icons-material/Circle';
 import InboxIcon from '@mui/icons-material/Inbox';
 import PersonIcon from '@mui/icons-material/Person';
@@ -76,7 +78,9 @@ export const MainDrawer = ({drawerOpen, toggleDrawer, openNewProject, projects =
     <Toolbar/>
     <Box sx={{overflow: drawerOpen ? 'auto' : 'hidden'}}>
       <List>
-        <Item disableTooltip={drawerOpen} Icon={InboxIcon} title='Todo' to='/'/>
+        <Item disableTooltip={drawerOpen} Icon={InboxIcon} title='Todo' to='/tasks/pending'/>
+        <Item disableTooltip={drawerOpen} Icon={CheckIcon} title='Completed' to='/tasks/completed'/>
+        <Item disableTooltip={drawerOpen} Icon={AssignmentIcon} title='All' to='/tasks'/>
         <Projects
           drawerOpen={drawerOpen} openNewProject={openNewProject} projects={projects}
         />

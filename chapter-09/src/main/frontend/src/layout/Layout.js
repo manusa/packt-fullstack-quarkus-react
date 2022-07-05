@@ -4,10 +4,11 @@ import {useNavigate} from 'react-router-dom';
 import {
   Box, Toolbar
 } from '@mui/material';
-import {toggleDrawer, openNewProject} from './';
+import {newTask, toggleDrawer, openNewProject} from './';
 import {TopBar} from './TopBar';
 import {MainDrawer} from './MainDrawer';
 import {api, NewProjectDialog} from '../projects';
+import {EditTask} from '../tasks';
 import {ChangePasswordDialog} from '../users';
 
 export const Layout = ({children}) => {
@@ -27,7 +28,7 @@ export const Layout = ({children}) => {
     <Box sx={{display: 'flex'}}>
       <TopBar
         goHome={() => navigate('/')}
-        newTask={() => {/* TODO */}}
+        newTask={() => dispatch(newTask())}
         toggleDrawer={doToggleDrawer} drawerOpen={drawerOpen}
       />
       <MainDrawer
@@ -40,6 +41,7 @@ export const Layout = ({children}) => {
           {children}
         </Box>
       </Box>
+      <EditTask />
       <NewProjectDialog />
       <ChangePasswordDialog />
     </Box>
