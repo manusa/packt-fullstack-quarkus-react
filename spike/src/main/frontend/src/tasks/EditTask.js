@@ -50,7 +50,7 @@ export const EditTask = () => {
         close();
       }
     })
-  }
+  };
   const [invalid, setInvalid] = useState( {});
   const onChange = event => {
     const {name, value} = event.currentTarget;
