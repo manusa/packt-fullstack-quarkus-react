@@ -45,5 +45,8 @@
   },
   "devDependencies": {
     "msw": "^0.42.1"
+  },
+  "jest": {
+    "testMatch": ["**/?(*.)+(spec|test).[jt]s?(x)"]
   }
 }

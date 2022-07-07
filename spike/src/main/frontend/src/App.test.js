@@ -14,11 +14,13 @@ describe('Router tests', () => {
   });
   beforeEach(() => {
     window.sessionStorage.clear();
+    server.resetHandlers();
+    server.use(rest.all('/api/*', (req, res, ctx) => res(ctx.status(404))));
   });
   afterAll(() => {
     server.close();
-  })
-  test('logged out user, redirects to login', () => {
+  });
+  test('logged out user visiting /tasks, redirects to /login', () => {
     // Given
     window.history.pushState({}, '', '/tasks');
     // When
@@ -28,7 +30,7 @@ describe('Router tests', () => {
     expect(screen.getByText(/Sign in/, {selector: 'h1'}))
       .toBeInTheDocument();
   });
-  test('logged in user, displays tasks', async () => {
+  test('logged in user visiting /tasks, displays /tasks', async () => {
     // Given
     server.use(rest.post('/api/v1/auth/login', (req, res, ctx) =>
       res(ctx.status(200), ctx.text('a-jwt'))));
@@ -41,4 +43,17 @@ describe('Router tests', () => {
     expect(screen.getByText(/Task manager/, {selector: '.MuiTypography-h6'}))
       .toBeInTheDocument();
   });
-})
+  test('logged in user visiting /, gets redirected to /tasks/pending', async () => {
+    // Given
+    server.use(rest.post('/api/v1/auth/login', (req, res, ctx) =>
+      res(ctx.status(200), ctx.text('a-jwt'))));
+    await store.dispatch(login({name: 'user', password: 'password'}));
+    window.history.pushState({}, '', '/');
+    // When
+    render(<App />);
+    // Then
+    expect(await screen.findByText(/Task manager/, {selector: '.MuiTypography-h6'}))
+      .toBeInTheDocument();
+    expect(window.location.pathname).toEqual('/tasks/pending');
+  });
+});
