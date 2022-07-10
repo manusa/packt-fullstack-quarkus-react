@@ -1,4 +1,5 @@
-import {screen, fireEvent, within, waitForElementToBeRemoved} from '@testing-library/react';
+import {screen, within, waitForElementToBeRemoved} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {rest} from 'msw';
 import {setupServer} from 'msw/node';
 import {render} from '../__tests__/react-redux';
@@ -34,7 +35,7 @@ describe('users module tests', () => {
     server.use(rest.get('/api/v1/users/self', (req, res, ctx) =>
       res(ctx.status(200), ctx.json({id: 0, name: 'the-username', roles: ['user']}))));
     app = await render(<App />);
-    fireEvent.click(screen.getByLabelText(/Profile/));
+    userEvent.click(screen.getByLabelText(/Profile/));
     const userMenu = screen.getByRole('menu');
     // When
     const userNameEntry = await within(userMenu).findByText('the-username');
@@ -47,13 +48,13 @@ describe('users module tests', () => {
     server.use(rest.put('/api/v1/users/self/password', (req, res, ctx) =>
       res(ctx.status(200), ctx.json({id: 0, name: 'the-username', roles: ['user']}))));
     app = await render(<App />);
-    fireEvent.click(screen.getByLabelText(/Profile/));
-    fireEvent.click(within(screen.getByRole('menu')).getByText(/Change Password/));
+    userEvent.click(screen.getByLabelText(/Profile/));
+    userEvent.click(within(screen.getByRole('menu')).getByText(/Change Password/));
     const dialog = screen.getByRole('dialog');
-    fireEvent.change(within(dialog).getByLabelText(/Current password/), {target: {value: 'admin'}});
-    fireEvent.change(within(dialog).getByLabelText(/New password/), {target: {value: 'password'}});
+    userEvent.type(within(dialog).getByLabelText(/Current password/), 'admin');
+    userEvent.type(within(dialog).getByLabelText(/New password/), 'password');
     // When
-    fireEvent.click(screen.getByText(/Save/));
+    userEvent.click(screen.getByText(/Save/));
     // Then
     await waitForElementToBeRemoved(dialog);
     expect(screen.queryByRole('dialog')).toBeNull();
@@ -69,7 +70,7 @@ describe('users module tests', () => {
       res(ctx.status(200), ctx.json({id: 0, name: 'admin', roles: ['admin', 'user']}))));
     app = await render(<App />);
     // When
-    fireEvent.click(await screen.findByLabelText(/Users/));
+    userEvent.click(await screen.findByLabelText(/Users/));
     // Then
     expect(await screen.findByText(/Users/, {selector: 'h2'})).toBeInTheDocument();
     const aUserRow = (await screen.findByText(/a-user/, {selector: 'td'})).closest('tr');

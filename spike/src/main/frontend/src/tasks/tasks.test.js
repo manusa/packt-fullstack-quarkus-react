@@ -1,4 +1,5 @@
-import {screen, fireEvent, within, waitForElementToBeRemoved} from '@testing-library/react';
+import {screen,  within, waitForElementToBeRemoved} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {rest} from 'msw';
 import {setupServer} from 'msw/node';
 import {render} from '../__tests__/react-redux';
@@ -44,11 +45,11 @@ describe('tasks module tests', () => {
     test('from top bar', async () => {
       // Given
       await renderApp();
-      fireEvent.click(screen.getByLabelText('Quick Add'));
+      userEvent.click(screen.getByLabelText('Quick Add'));
       const dialog = screen.getByRole('dialog');
-      fireEvent.change(within(dialog).getByLabelText(/Title/), {target: {value: 'new-task'}});
+      userEvent.type(within(dialog).getByLabelText(/Title/), 'new-task');
       // When
-      fireEvent.click(screen.getByText(/save/));
+      userEvent.click(screen.getByText(/save/));
       // Then
       await waitForElementToBeRemoved(dialog);
       expect(screen.queryByRole('dialog')).toBeNull();
@@ -56,12 +57,12 @@ describe('tasks module tests', () => {
     test('from tasks page', async () => {
       // Given
       await renderApp();
-      fireEvent.click(screen.getByText('Add task'));
+      userEvent.click(screen.getByText('Add task'));
       const dialog = screen.getByRole('dialog');
-      fireEvent.change(within(dialog).getByLabelText(/Title/), {target: {value: 'new-task'}});
-      fireEvent.change(within(dialog).getByLabelText(/Description/), {target: {value: 'A description'}});
+      userEvent.type(within(dialog).getByLabelText(/Title/), 'new-task');
+      userEvent.type(within(dialog).getByLabelText(/Description/), 'A description');
       // When
-      fireEvent.click(screen.getByText(/save/));
+      userEvent.click(screen.getByText(/save/));
       // Then
       await waitForElementToBeRemoved(dialog);
       expect(screen.queryByRole('dialog')).toBeNull();
@@ -70,13 +71,13 @@ describe('tasks module tests', () => {
     test('with priority', async () => {
       // Given
       await renderApp();
-      fireEvent.click(screen.getByText('Add task'));
+      userEvent.click(screen.getByText('Add task'));
       const dialog = screen.getByRole('dialog');
-      fireEvent.change(within(dialog).getByLabelText(/Title/), {target: {value: 'new-task'}});
-      fireEvent.click(within(dialog).getByTestId('FlagOutlinedIcon'));
-      fireEvent.click(await screen.findByText(/Priority 2/));
+      userEvent.type(within(dialog).getByLabelText(/Title/), 'new-task');
+      userEvent.click(within(dialog).getByTestId('FlagOutlinedIcon'));
+      userEvent.click(await screen.findByText(/Priority 2/));
       // When
-      fireEvent.click(screen.getByText(/save/));
+      userEvent.click(screen.getByText(/save/));
       // Then
       await waitForElementToBeRemoved(dialog);
       expect(screen.queryByRole('dialog')).toBeNull();
@@ -85,13 +86,13 @@ describe('tasks module tests', () => {
     test('with project', async () => {
       // Given
       await renderApp();
-      fireEvent.click(screen.getByText('Add task'));
+      userEvent.click(screen.getByText('Add task'));
       const dialog = screen.getByRole('dialog');
-      fireEvent.change(within(dialog).getByLabelText(/Title/), {target: {value: 'new-task'}});
-      fireEvent.click(within(dialog).getByTestId('LocalOfferIcon'));
-      fireEvent.click(within(await screen.findByRole('menu')).getByText(/Home stuff/));
+      userEvent.type(within(dialog).getByLabelText(/Title/), 'new-task');
+      userEvent.click(within(dialog).getByTestId('LocalOfferIcon'));
+      userEvent.click(within(await screen.findByRole('menu')).getByText(/Home stuff/));
       // When
-      fireEvent.click(screen.getByText(/save/));
+      userEvent.click(screen.getByText(/save/));
       // Then
       await waitForElementToBeRemoved(dialog);
       expect(screen.queryByRole('dialog')).toBeNull();
@@ -136,7 +137,7 @@ describe('tasks module tests', () => {
     test('for project', async () => {
       // Given
       render(<App />);
-      fireEvent.click(await screen.findByText(/Work stuff/, {selector: 'a.MuiListItemButton-root span'}));
+      userEvent.click(await screen.findByText(/Work stuff/, {selector: 'a.MuiListItemButton-root span'}));
       await screen.findByText(/Work stuff/, {selector: 'h2'});
       // When
       await screen.findByText(/Pending task 1/);

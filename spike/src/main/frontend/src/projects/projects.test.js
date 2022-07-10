@@ -1,4 +1,5 @@
-import {screen, fireEvent, within, waitForElementToBeRemoved} from '@testing-library/react';
+import {screen, within, waitForElementToBeRemoved} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {rest} from 'msw';
 import {setupServer} from 'msw/node';
 import {render} from '../__tests__/react-redux';
@@ -29,11 +30,11 @@ describe('projects module tests', () => {
     server.use(rest.post('/api/v1/projects', (req, res, ctx) =>
         res(ctx.status(201), ctx.json({name: req.body.name}))));
     render(<App />);
-    fireEvent.click(within(screen.getByText(/Projects/).closest('li')).getByTestId(/AddIcon/));
+    userEvent.click(within(screen.getByText(/Projects/).closest('li')).getByTestId(/AddIcon/));
     const dialog = screen.getByRole('dialog');
-    fireEvent.change(within(dialog).getByLabelText(/Name/), {target: {value: 'new-project'}});
+    userEvent.type(within(dialog).getByLabelText(/Name/), 'new-project');
     // When
-    fireEvent.click(screen.getByText(/Save/));
+    userEvent.click(screen.getByText(/Save/));
     // Then
     await waitForElementToBeRemoved(dialog);
     expect(screen.queryByRole('dialog')).toBeNull();

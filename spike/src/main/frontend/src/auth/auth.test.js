@@ -1,4 +1,5 @@
-import {screen, fireEvent, waitFor, within} from '@testing-library/react';
+import {screen, waitFor, within} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {rest} from 'msw';
 import {setupServer} from 'msw/node';
 import {render} from '../__tests__/react-redux';
@@ -31,9 +32,9 @@ describe('auth module tests', () => {
       // Given
       render(<App />);
       // When
-      fireEvent.change(screen.getByLabelText(/Username/), {target: {value: 'admin'}});
-      fireEvent.change(screen.getByLabelText(/Password/), {target: {value: 'password'}});
-      fireEvent.click(screen.getByText(/Sign In/));
+      userEvent.type(screen.getByLabelText(/Username/), 'admin');
+      userEvent.type(screen.getByLabelText(/Password/), 'password');
+      userEvent.click(screen.getByText(/Sign In/));
       // Then
       await waitFor(() => expect(window.location.pathname).toEqual('/tasks/pending'));
       expect(await screen.findByText(/Todo/, {selector: 'h2'})).toBeInTheDocument();
@@ -42,9 +43,9 @@ describe('auth module tests', () => {
       // Given
       render(<App />);
       // When
-      fireEvent.change(screen.getByLabelText(/Username/), {target: {value: 'admin'}});
-      fireEvent.change(screen.getByLabelText(/Password/), {target: {value: 'wrong'}});
-      fireEvent.click(screen.getByText(/Sign In/));
+      userEvent.type(screen.getByLabelText(/Username/), 'admin');
+      userEvent.type(screen.getByLabelText(/Password/), 'wrong');
+      userEvent.click(screen.getByText(/Sign In/));
       // Then
       expect(await screen.findByText(/Invalid credentials/)).toBeInTheDocument();
     });
@@ -54,9 +55,9 @@ describe('auth module tests', () => {
         (req, res, ctx) => res(ctx.status(501))));
       render(<App />);
       // When
-      fireEvent.change(screen.getByLabelText(/Username/), {target: {value: 'admin'}});
-      fireEvent.change(screen.getByLabelText(/Password/), {target: {value: 'wrong'}});
-      fireEvent.click(screen.getByText(/Sign In/));
+      userEvent.type(screen.getByLabelText(/Username/), 'admin');
+      userEvent.type(screen.getByLabelText(/Password/), 'password');
+      userEvent.click(screen.getByText(/Sign In/));
       // Then
       expect(within(await screen.findByRole('alert')).getByText(/Error/)).toBeInTheDocument();
     });
@@ -66,10 +67,10 @@ describe('auth module tests', () => {
     await store.dispatch(login({name: 'user', password: 'password'}));
     window.history.pushState({}, '', '/tasks');
     render(<App />);
-    fireEvent.click(screen.getByLabelText(/Profile/));
+    userEvent.click(screen.getByLabelText(/Profile/));
     const logoutMenuItem = screen.getByText(/Logout/);
     // When
-    fireEvent.click(logoutMenuItem);
+    userEvent.click(logoutMenuItem);
     // Then
     await waitFor(() => expect(window.location.pathname).toEqual('/login'));
   });
