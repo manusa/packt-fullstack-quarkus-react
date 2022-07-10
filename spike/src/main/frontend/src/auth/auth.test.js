@@ -47,7 +47,7 @@ describe('auth module tests', () => {
       userEvent.type(screen.getByLabelText(/Password/), 'wrong');
       userEvent.click(screen.getByText(/Sign In/));
       // Then
-      expect(await screen.findByText(/Invalid credentials/)).toBeInTheDocument();
+      expect(within(await screen.findByRole('alert')).getByText(/Invalid credentials/)).toBeInTheDocument();
     });
     test('with server error, user gets generic error', async () => {
       // Given
