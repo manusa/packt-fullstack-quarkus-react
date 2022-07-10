@@ -24,34 +24,27 @@ describe('auth module tests', () => {
     server.close();
   });
   describe('login', () => {
-    let username;
-    let password;
-    let signIn;
-    const renderLogin = () => {
+    beforeEach(() => {
       window.history.pushState({}, '', '/login');
-      render(<App />);
-      username = screen.getByLabelText(/Username/);
-      password = screen.getByLabelText(/Password/);
-      signIn = screen.getByText(/Sign In/);
-    };
+    });
     test('with valid credentials, user logs in', async () => {
       // Given
-      renderLogin();
+      render(<App />);
       // When
-      fireEvent.change(username, {target: {value: 'admin'}});
-      fireEvent.change(password, {target: {value: 'password'}});
-      fireEvent.click(signIn);
+      fireEvent.change(screen.getByLabelText(/Username/), {target: {value: 'admin'}});
+      fireEvent.change(screen.getByLabelText(/Password/), {target: {value: 'password'}});
+      fireEvent.click(screen.getByText(/Sign In/));
       // Then
       await waitFor(() => expect(window.location.pathname).toEqual('/tasks/pending'));
       expect(await screen.findByText(/Todo/, {selector: 'h2'})).toBeInTheDocument();
     });
     test('with invalid credentials, user gets credentials error', async () => {
       // Given
-      renderLogin();
+      render(<App />);
       // When
-      fireEvent.change(username, {target: {value: 'admin'}});
-      fireEvent.change(password, {target: {value: 'wrong'}});
-      fireEvent.click(signIn);
+      fireEvent.change(screen.getByLabelText(/Username/), {target: {value: 'admin'}});
+      fireEvent.change(screen.getByLabelText(/Password/), {target: {value: 'wrong'}});
+      fireEvent.click(screen.getByText(/Sign In/));
       // Then
       expect(await screen.findByText(/Invalid credentials/)).toBeInTheDocument();
     });
@@ -59,11 +52,11 @@ describe('auth module tests', () => {
       // Given
       server.use(rest.post('/api/v1/auth/login',
         (req, res, ctx) => res(ctx.status(501))));
-      renderLogin();
+      render(<App />);
       // When
-      fireEvent.change(username, {target: {value: 'admin'}});
-      fireEvent.change(password, {target: {value: 'wrong'}});
-      fireEvent.click(signIn);
+      fireEvent.change(screen.getByLabelText(/Username/), {target: {value: 'admin'}});
+      fireEvent.change(screen.getByLabelText(/Password/), {target: {value: 'wrong'}});
+      fireEvent.click(screen.getByText(/Sign In/));
       // Then
       expect(within(await screen.findByRole('alert')).getByText(/Error/)).toBeInTheDocument();
     });
