@@ -149,4 +149,4 @@ describe('tasks module tests', () => {
       expect(screen.queryByText(/Pending task 2/)).not.toBeInTheDocument();
     });
   });
-})
+});

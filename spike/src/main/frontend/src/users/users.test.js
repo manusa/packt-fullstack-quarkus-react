@@ -77,4 +77,4 @@ describe('users module tests', () => {
     expect(aUserRow).toBeInTheDocument();
     expect(within(aUserRow).getByText(/user, other-role/)).toBeInTheDocument();
   });
-})
+});

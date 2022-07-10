@@ -74,4 +74,4 @@ describe('auth module tests', () => {
     // Then
     await waitFor(() => expect(window.location.pathname).toEqual('/login'));
   });
-})
+});

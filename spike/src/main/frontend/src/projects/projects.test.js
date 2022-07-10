@@ -48,4 +48,4 @@ describe('projects module tests', () => {
     // Then
     expect(await screen.findByText('A Project')).toBeInTheDocument();
   });
-})
+});
