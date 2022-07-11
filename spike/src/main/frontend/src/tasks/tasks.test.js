@@ -15,14 +15,20 @@ describe('tasks module tests', () => {
   });
   beforeEach(async () => {
     server.resetHandlers();
-    server.use(rest.all('/api/*', (req, res, ctx) => res(ctx.status(404))));
+    server.use(rest.get('/api/v1/tasks', (req, res, ctx) =>
+      res(ctx.status(200), ctx.json([
+        {id: 1, title: 'Pending task 1', description: 'A description', priority: 1, project: {id: 0, name: 'Work stuff'}},
+        {id: 2, title: 'Pending task 2', project: {id: 1, name: 'Home stuff'}},
+        {id: 3, title: 'Completed task 3', complete: '2015-10-21', project: {id: 1, name: 'Home stuff'}},
+      ]))
+    ));
     server.use(rest.get('/api/v1/projects', (req, res, ctx) =>
       res(ctx.status(200), ctx.json([{id: 0, name: 'Work stuff'}, {id: 1, name: 'Home stuff'}]))));
+    server.use(rest.get('/api/v1/users/self', (req, res, ctx) =>
+      res(ctx.status(200), ctx.json({id: 0, name: 'user', roles: ['user', 'admin']}))));
     // all task module interaction requires a logged-in user
     server.use(rest.post('/api/v1/auth/login', (req, res, ctx) =>
       res(ctx.status(200), ctx.text('a-jwt'))));
-    server.use(rest.get('/api/v1/users/self', (req, res, ctx) =>
-      res(ctx.status(200), ctx.json({id: 0, name: 'user', roles: ['user', 'admin']}))));
     await store.dispatch(login({name: 'user', password: 'password'}));
     window.history.pushState({}, '', '/');
   });
@@ -53,14 +59,15 @@ describe('tasks module tests', () => {
       // Then
       await waitForElementToBeRemoved(dialog);
       expect(screen.queryByRole('dialog')).toBeNull();
+      expect(taskRequestBody.title).toEqual('new-task');
     });
     test('from tasks page', async () => {
       // Given
       await renderApp();
       userEvent.click(screen.getByText('Add task'));
       const dialog = screen.getByRole('dialog');
-      userEvent.type(within(dialog).getByLabelText(/Title/), 'new-task');
-      userEvent.type(within(dialog).getByLabelText(/Description/), 'A description');
+      userEvent.paste(within(dialog).getByLabelText(/Title/), 'new-task');
+      userEvent.paste(within(dialog).getByLabelText(/Description/), 'A description');
       // When
       userEvent.click(screen.getByText(/save/));
       // Then
@@ -73,7 +80,7 @@ describe('tasks module tests', () => {
       await renderApp();
       userEvent.click(screen.getByText('Add task'));
       const dialog = screen.getByRole('dialog');
-      userEvent.type(within(dialog).getByLabelText(/Title/), 'new-task');
+      userEvent.paste(within(dialog).getByLabelText(/Title/), 'new-task');
       userEvent.click(within(dialog).getByTestId('FlagOutlinedIcon'));
       userEvent.click(await screen.findByText(/Priority 2/));
       // When
@@ -88,7 +95,7 @@ describe('tasks module tests', () => {
       await renderApp();
       userEvent.click(screen.getByText('Add task'));
       const dialog = screen.getByRole('dialog');
-      userEvent.type(within(dialog).getByLabelText(/Title/), 'new-task');
+      userEvent.paste(within(dialog).getByLabelText(/Title/), 'new-task');
       userEvent.click(within(dialog).getByTestId('LocalOfferIcon'));
       userEvent.click(within(await screen.findByRole('menu')).getByText(/Home stuff/));
       // When
@@ -100,15 +107,6 @@ describe('tasks module tests', () => {
     });
   });
   describe('users can list tasks', () => {
-    beforeEach(() => {
-      server.use(rest.get('/api/v1/tasks', (req, res, ctx) =>
-        res(ctx.status(200), ctx.json([
-          {id: 0, title: 'Pending task 1', description: 'A description', priority: 1, project: {id: 0, name: 'Work stuff'}},
-          {id: 1, title: 'Pending task 2', project: {id: 1, name: 'Home stuff'}},
-          {id: 2, title: 'Completed task 3', complete: '2015-10-21', project: {id: 1, name: 'Home stuff'}},
-        ]))
-      ));
-    });
     test('pending', async () => {
       // Given
       render(<App />);
@@ -147,6 +145,48 @@ describe('tasks module tests', () => {
       expect(screen.getByText(/Pending task 1/)).toBeInTheDocument();
       expect(screen.queryByText(/Completed task 3/)).not.toBeInTheDocument();
       expect(screen.queryByText(/Pending task 2/)).not.toBeInTheDocument();
+    });
+  });
+  describe('users can edit tasks', () => {
+    let updateRequestBody;
+    beforeEach(() => {
+      server.use(rest.put('/api/v1/tasks/1', (req, res, ctx) => {
+        updateRequestBody = req.body;
+        return res(ctx.status(200));
+      }));
+    });
+    test('to change text fields', async () => {
+      // Given
+      render(<App />);
+      userEvent.click(await screen.findByText(/Pending task 1/));
+      const dialog = await screen.findByRole('dialog');
+      // When
+      userEvent.type(within(dialog).getByLabelText(/Title/), '{selectall}Changed title');
+      userEvent.type(within(dialog).getByLabelText(/Description/), '{selectall}Changed description');
+      userEvent.click(within(dialog).getByText(/save/));
+      // Then
+      await waitForElementToBeRemoved(dialog);
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(updateRequestBody).toMatchObject({
+        title: 'Changed title',
+        description: 'Changed description'
+      });
+    });
+    test('to change priority', async () => {
+      // Given
+      await render(<App />);
+      userEvent.click(await screen.findByText(/Pending task 1/));
+      const dialog = await screen.findByRole('dialog');
+      // When
+      userEvent.click(within(dialog).getByTestId('FlagIcon'));
+      userEvent.click(await screen.findByText(/Priority 3/));
+      userEvent.click(within(dialog).getByText(/save/));
+      // Then
+      await waitForElementToBeRemoved(dialog);
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(updateRequestBody).toMatchObject({
+        priority: 3
+      });
     });
   });
 });
