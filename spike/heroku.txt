@@ -1,0 +1,31 @@
+Deploying as git
+================
+
+## Subdirectory as isolated Git repository
+
+> _https://devcenter.heroku.com/articles/git_
+
+- cd to directory
+- git init
+- git add .
+- git commit -m 'Initial commit'
+- For an Existing app (we created it through the web interface)
+  - heroku git:remote -a packt-test
+- Optionally clear any buildpacks settings
+  - heroku buildpacks:clear
+- Use multiple buildpacks (Node & Java - Order Matters)
+  // - heroku buildpacks:add heroku/nodejs
+  // - heroku buildpacks:add heroku/nodejs-engine
+  - heroku buildpacks:add heroku-community/apt
+  - heroku buildpacks:add heroku/java
+- Customize Buildpack Java
+  - heroku config:set MAVEN_CUSTOM_OPTS="-Pfrontend"
+- git push heroku master
+
+
+
+-----
+
+Maybe use https://github.com/heroku/heroku-buildpack-inline and provide scripts
+to install node
+
