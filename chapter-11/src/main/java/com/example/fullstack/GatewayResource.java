@@ -1,5 +1,6 @@
 package com.example.fullstack;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.jboss.resteasy.reactive.RestResponse;
 
 import javax.ws.rs.GET;
@@ -12,6 +13,7 @@ import java.net.URLConnection;
 import java.util.Objects;
 
 @Path("/")
+@RegisterForReflection
 public class GatewayResource {
 
   private static final String FALLBACK_RESOURCE = "/frontend/index.html";
