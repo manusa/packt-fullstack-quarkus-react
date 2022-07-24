@@ -33,6 +33,9 @@ spec:
           ports:
             - containerPort: 5432
               protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
           readinessProbe:
             exec:
               command:
@@ -43,5 +46,9 @@ spec:
             periodSeconds: 1
             successThreshold: 1
             timeoutSeconds: 1
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: ${postgresql.serviceName}
 
 
