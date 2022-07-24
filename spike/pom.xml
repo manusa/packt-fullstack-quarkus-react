@@ -2,8 +2,8 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.example.fullstack</groupId>
-  <artifactId>reactive-spike</artifactId>
+  <groupId>com.example.fullstack.spike</groupId>
+  <artifactId>task-manager</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>Packt :: Fullstack Quarkus + React :: Spike</name>
   <properties>
@@ -130,6 +130,27 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>kubernetes</id>
+      <properties>
+        <postgresql.serviceName>postgresql</postgresql.serviceName>
+        <jkube.createExternalUrls>true</jkube.createExternalUrls>
+        <jkube.domain>192.168.49.2.nip.io</jkube.domain>
+        <jkube.name>task-manager</jkube.name>
+        <jkube.generator.name>marcnuri/task-manager:latest</jkube.generator.name>
+        <jkube.enricher.jkube-controller.pullPolicy>Always</jkube.enricher.jkube-controller.pullPolicy>
+        <jkube.enricher.jkube-project-label.group>${project.artifactId}</jkube.enricher.jkube-project-label.group>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.jkube</groupId>
+            <artifactId>kubernetes-maven-plugin</artifactId>
+            <version>1.8.0</version>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>frontend</id>
       <build>
