@@ -1,0 +1,18 @@
+FROM eclipse-temurin:17-jre-alpine
+
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
+
+# We make four distinct layers so if there are application changes the library layers can be re-used
+COPY heroku/target/quarkus-app/lib/ /deployments/lib/
+COPY heroku/target/quarkus-app/*.jar /deployments/
+COPY heroku/target/quarkus-app/app/ /deployments/app/
+COPY heroku/target/quarkus-app/quarkus/ /deployments/quarkus/
+
+CMD java -Dquarkus.http.host=0.0.0.0                                       \
+         -Dquarkus.http.port=$PORT                                         \
+         -Dquarkus.datasource.reactive.url=$DATABASE_URL                   \
+         -Dquarkus.datasource.reactive.postgresql.ssl-mode=require         \
+         -Dquarkus.datasource.reactive.trust-all=true                      \
+         -Dquarkus.hibernate-orm.database.generation=create                \
+         -Djava.util.logging.manager=org.jboss.logmanager.LogManager       \
+         -jar /deployments/quarkus-run.jar

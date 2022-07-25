@@ -17,6 +17,13 @@
     <quarkus.platform.version>2.10.2.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+    <postgresql.serviceName>postgresql</postgresql.serviceName>
+    <jkube.createExternalUrls>true</jkube.createExternalUrls>
+    <jkube.domain>192.168.49.2.nip.io</jkube.domain>
+    <jkube.name>task-manager</jkube.name>
+    <jkube.generator.name>marcnuri/task-manager:latest</jkube.generator.name>
+    <jkube.enricher.jkube-controller.pullPolicy>Always</jkube.enricher.jkube-controller.pullPolicy>
+    <jkube.enricher.jkube-project-label.group>${project.artifactId}</jkube.enricher.jkube-project-label.group>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -81,6 +88,11 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jkube</groupId>
+      <artifactId>kubernetes-maven-plugin</artifactId>
+      <version>1.8.0</version>
+    </dependency>
   </dependencies>
   <build>
     <resources>
@@ -127,26 +139,37 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.eclipse.jkube</groupId>
+        <artifactId>kubernetes-maven-plugin</artifactId>
+        <version>1.8.0</version>
+      </plugin>
     </plugins>
   </build>
   <profiles>
     <profile>
-      <id>kubernetes</id>
+      <id>heroku</id>
       <properties>
-        <postgresql.serviceName>postgresql</postgresql.serviceName>
-        <jkube.createExternalUrls>true</jkube.createExternalUrls>
-        <jkube.domain>192.168.49.2.nip.io</jkube.domain>
-        <jkube.name>task-manager</jkube.name>
-        <jkube.generator.name>marcnuri/task-manager:latest</jkube.generator.name>
-        <jkube.enricher.jkube-controller.pullPolicy>Always</jkube.enricher.jkube-controller.pullPolicy>
-        <jkube.enricher.jkube-project-label.group>${project.artifactId}</jkube.enricher.jkube-project-label.group>
+        <jkube.docker.push.username>marc</jkube.docker.push.username>
       </properties>
       <build>
         <plugins>
           <plugin>
             <groupId>org.eclipse.jkube</groupId>
             <artifactId>kubernetes-maven-plugin</artifactId>
-            <version>1.8.0</version>
+            <configuration>
+              <images>
+                <image>
+                  <name>registry.heroku.com/packt-test/web</name>
+                  <build>
+                    <dockerFile>${project.basedir}/Dockerfile.heroku</dockerFile>
+                    <assembly>
+                      <name>heroku</name>
+                    </assembly>
+                  </build>
+                </image>
+              </images>
+            </configuration>
           </plugin>
         </plugins>
       </build>
