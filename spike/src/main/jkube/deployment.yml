@@ -17,3 +17,4 @@ spec:
               value: postgresql://${postgresql.serviceName}:5432/postgres
             - name: QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION
               value: create
+          imagePullPolicy: Always
