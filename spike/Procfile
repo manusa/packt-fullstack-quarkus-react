@@ -1,1 +1,0 @@
-web: java -Dquarkus.datasource.reactive.url=$DATABASE_URL -jar target/quarkus-app/quarkus-run.jar

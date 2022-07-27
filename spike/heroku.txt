@@ -29,3 +29,14 @@ Deploying as git
 Maybe use https://github.com/heroku/heroku-buildpack-inline and provide scripts
 to install node
 
+
+-----
+
+
+Using container builds+JKube
+
+mvn -Pheroku k8s:build k8s:push -Djkube.docker.push.username=_ -Djkube.docker.push.password=$(heroku auth:token)
+
+heroku container:release web --app packt-test
+
+
