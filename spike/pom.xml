@@ -19,6 +19,7 @@
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
     <jkube.version>1.8.0</jkube.version>
     <postgresql.serviceName>postgresql</postgresql.serviceName>
+    <jkube.build.strategy>jib</jkube.build.strategy>
     <jkube.createExternalUrls>true</jkube.createExternalUrls>
     <jkube.domain>192.168.49.2.nip.io</jkube.domain>
     <jkube.name>task-manager</jkube.name>
