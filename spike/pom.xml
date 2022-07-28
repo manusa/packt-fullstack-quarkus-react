@@ -89,11 +89,6 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.jkube</groupId>
-      <artifactId>kubernetes-maven-plugin</artifactId>
-      <version>1.8.0</version>
-    </dependency>
   </dependencies>
   <build>
     <resources>
@@ -149,9 +144,9 @@
   </build>
   <profiles>
     <profile>
-      <id>heroku</id>
+      <id>heroku-docker</id>
       <properties>
-        <jkube.docker.push.username>marc</jkube.docker.push.username>
+        <jkube.build.strategy>jib</jkube.build.strategy>
       </properties>
       <build>
         <plugins>
@@ -167,6 +162,57 @@
                     <assembly>
                       <name>heroku</name>
                     </assembly>
+                  </build>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>heroku-xml</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.jkube</groupId>
+            <artifactId>kubernetes-maven-plugin</artifactId>
+            <configuration>
+              <images>
+                <image>
+                  <name>registry.heroku.com/packt-test/web</name>
+                  <build>
+                    <from>quay.io/quarkus/quarkus-micro-image:1.0</from>
+                    <assembly>
+                      <name>heroku</name>
+                      <targetDir>/deployments</targetDir>
+                      <layers>
+                        <layer>
+                          <files>
+                            <file>
+                              <source>${project.build.directory}/${project.artifactId}-${project.version}-runner</source>
+                              <outputDirectory>.</outputDirectory>
+                              <fileMode>0755</fileMode>
+                            </file>
+                          </files>
+                        </layer>
+                      </layers>
+                    </assembly>
+                    <cmd>
+                      <exec>
+                        <arg>sh</arg>
+                        <arg>-c</arg>
+                        <arg>./deployments/${project.artifactId}-${project.version}-runner \
+                          -Dquarkus.http.host=0.0.0.0                                      \
+                          -Dquarkus.http.port=$PORT                                        \
+                          -Dquarkus.datasource.reactive.url=$DATABASE_URL                  \
+                          -Dquarkus.datasource.reactive.postgresql.ssl-mode=require        \
+                          -Dquarkus.datasource.reactive.trust-all=true                     \
+                          -Dquarkus.hibernate-orm.database.generation=create               \
+                          -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+                        </arg>
+                      </exec>
+                    </cmd>
                   </build>
                 </image>
               </images>
