@@ -16,6 +16,8 @@
     <quarkus.platform.version>2.10.2.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+    <jkube.version>1.8.0</jkube.version>
+    <jkube.generator.name>marcnuri/task-manager:latest</jkube.generator.name>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -121,6 +123,11 @@
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.jkube</groupId>
+        <artifactId>kubernetes-maven-plugin</artifactId>
+        <version>${jkube.version}</version>
       </plugin>
     </plugins>
   </build>
