@@ -137,6 +137,30 @@
   </build>
   <profiles>
     <profile>
+      <id>heroku</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.jkube</groupId>
+            <artifactId>kubernetes-maven-plugin</artifactId>
+            <configuration>
+              <images>
+                <image>
+                  <name>registry.heroku.com/subatomic-tasks/web</name>
+                  <build>
+                    <dockerFile>${project.basedir}/Dockerfile.heroku</dockerFile>
+                    <assembly>
+                      <name>heroku</name>
+                    </assembly>
+                  </build>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>frontend</id>
       <build>
         <plugins>
