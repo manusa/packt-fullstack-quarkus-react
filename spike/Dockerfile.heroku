@@ -10,5 +10,4 @@ CMD ./deployments/application                                               \
          -Dquarkus.datasource.reactive.url=$DATABASE_URL                    \
          -Dquarkus.datasource.reactive.postgresql.ssl-mode=require          \
          -Dquarkus.datasource.reactive.trust-all=true                       \
-         -Dquarkus.hibernate-orm.database.generation=create                 \
-         -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+         -Dquarkus.hibernate-orm.database.generation=create

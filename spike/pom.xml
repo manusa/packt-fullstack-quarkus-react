@@ -143,9 +143,6 @@
   <profiles>
     <profile>
       <id>heroku-docker</id>
-      <properties>
-        <jkube.build.strategy>jib</jkube.build.strategy>
-      </properties>
       <build>
         <plugins>
           <plugin>
@@ -170,6 +167,9 @@
     </profile>
     <profile>
       <id>heroku-xml</id>
+      <properties>
+        <jkube.build.strategy>jib</jkube.build.strategy>
+      </properties>
       <build>
         <plugins>
           <plugin>
