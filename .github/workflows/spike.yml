@@ -24,4 +24,6 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: Build and test
-        run: cd spike && mvn -Pfrontend clean package
+        run: cd spike && ./mvnw -Pfrontend clean package
+      - name: Test frontend
+        run: cd spike/src/main/frontend && npm test -- --all --watchAll=false
