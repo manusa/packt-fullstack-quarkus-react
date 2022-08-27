@@ -1,0 +1,25 @@
+name: Chapter projects sanity
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  backend:
+    name: ${{ matrix.chapter }} Quarkus backend sanity
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        chapter: ['01','02','03']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+      - name: Build and test
+        run: cd chapter-${{ matrix.chapter }} && ./mvnw verify
