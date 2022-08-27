@@ -1,6 +1,5 @@
 package com.example.fullstack.user;
 
-import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.ResponseStatus;
 
@@ -33,7 +32,6 @@ public class UserResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @ResponseStatus(201)
-  @ReactiveTransactional
   public Uni<User> create(User user) {
     return userService.create(user);
   }
@@ -47,7 +45,6 @@ public class UserResource {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("{id}")
-  @ReactiveTransactional
   public Uni<User> update(@PathParam("id") long id, User user) {
     user.id = id;
     return userService.update(user);
@@ -55,7 +52,6 @@ public class UserResource {
 
   @DELETE
   @Path("{id}")
-  @ReactiveTransactional
   public Uni<Void> delete(@PathParam("id") long id) {
     return userService.delete(id);
   }
