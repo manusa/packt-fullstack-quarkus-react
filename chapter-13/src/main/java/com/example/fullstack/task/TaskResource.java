@@ -1,6 +1,5 @@
 package com.example.fullstack.task;
 
-import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.ResponseStatus;
 
@@ -35,7 +34,6 @@ public class TaskResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @ResponseStatus(201)
-  @ReactiveTransactional
   public Uni<Task> create(Task task) {
     return taskService.create(task);
   }
@@ -43,7 +41,6 @@ public class TaskResource {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  @ReactiveTransactional
   public Uni<Task> update(@PathParam("id") long id, Task task) {
     task.id = id;
     return taskService.update(task);
@@ -51,14 +48,12 @@ public class TaskResource {
 
   @DELETE
   @Path("/{id}")
-  @ReactiveTransactional
   public Uni<Void> delete(@PathParam("id") long id) {
     return taskService.delete(id);
   }
 
   @PUT
   @Path("/{id}/complete")
-  @ReactiveTransactional
   public Uni<Boolean> setComplete(@PathParam("id") long id, boolean complete) {
     return taskService.setComplete(id, complete);
   }
