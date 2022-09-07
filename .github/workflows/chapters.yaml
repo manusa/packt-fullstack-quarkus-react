@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chapter: ['01','02','03']
+        chapter: ['01','02','03','04']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
