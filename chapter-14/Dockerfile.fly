@@ -1,13 +1,10 @@
 FROM quay.io/quarkus/quarkus-micro-image:1.0
 
-COPY heroku/target/*-runner /deployments/application
+COPY fly/target/*-runner /deployments/application
 
 RUN chmod a+x /deployments/*
 
 CMD ./deployments/application                                               \
          -Dquarkus.http.host=0.0.0.0                                        \
-         -Dquarkus.http.port=$PORT                                          \
          -Dquarkus.datasource.reactive.url=$DATABASE_URL                    \
-         -Dquarkus.datasource.reactive.postgresql.ssl-mode=require          \
-         -Dquarkus.datasource.reactive.trust-all=true                       \
          -Dquarkus.hibernate-orm.database.generation=create
