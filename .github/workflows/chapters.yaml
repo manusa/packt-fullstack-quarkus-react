@@ -23,3 +23,20 @@ jobs:
           distribution: temurin
       - name: Build and test
         run: cd chapter-${{ matrix.chapter }} && ./mvnw verify
+  frontend:
+    name: ${{ matrix.chapter }} React frontend sanity
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        chapter: ['10','11','12','13','14']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies using Quarkus
+        run: cd chapter-${{ matrix.chapter }}/src/main/frontend && npm install
+      - name: Test frontend
+        run: cd chapter-${{ matrix.chapter }}/src/main/frontend && npm test -- --all --watchAll=false
