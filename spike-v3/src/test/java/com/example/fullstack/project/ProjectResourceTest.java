@@ -1,8 +1,10 @@
 package com.example.fullstack.project;
 
 import com.example.fullstack.task.Task;
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
+import io.quarkus.vertx.VertxContextSupport;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
@@ -105,7 +107,7 @@ class ProjectResourceTest {
 
   @Test
   @TestSecurity(user = "user", roles = "user")
-  void delete() {
+  void delete() throws Throwable {
     var toDelete = given().body("{\"name\":\"to-delete\"}").contentType(ContentType.JSON)
       .post("/api/v1/projects").as(Project.class);
     var dependentTask = given()
@@ -115,6 +117,8 @@ class ProjectResourceTest {
       .when().delete("/api/v1/projects/" + toDelete.id)
       .then()
       .statusCode(204);
-    assertThat(Task.<Task>findById(dependentTask.id).await().indefinitely().project, nullValue());
+    assertThat(
+      VertxContextSupport.subscribeAndAwait(() -> Panache.withSession(() -> Task.<Task>findById(dependentTask.id))).project,
+      nullValue());
   }
 }

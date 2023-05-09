@@ -1,8 +1,10 @@
 package com.example.fullstack.user;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
+import io.quarkus.vertx.VertxContextSupport;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
@@ -132,7 +134,7 @@ class UserResourceTest {
 
   @Test
   @TestSecurity(user = "admin", roles = "admin")
-  void delete() {
+  void delete() throws Throwable {
     var toDelete = given()
       .body("{\"name\":\"to-delete\",\"password\":\"test\"}")
       .contentType(ContentType.JSON)
@@ -142,7 +144,9 @@ class UserResourceTest {
       .when().delete("/api/v1/users/" + toDelete.id)
       .then()
       .statusCode(204);
-    assertThat(User.findById(toDelete.id).await().indefinitely(), nullValue());
+    assertThat(
+      VertxContextSupport.subscribeAndAwait(() -> Panache.withSession(() -> User.findById(toDelete.id))),
+      nullValue());
   }
 
   @Test
@@ -157,7 +161,7 @@ class UserResourceTest {
 
   @Test
   @TestSecurity(user = "admin", roles = "user")
-  void changePassword() {
+  void changePassword() throws Throwable {
     given()
       .body("{\"currentPassword\": \"quarkus\", \"newPassword\": \"changed\"}")
       .contentType(ContentType.JSON)
@@ -165,8 +169,7 @@ class UserResourceTest {
       .then()
       .statusCode(200);
     assertTrue(BcryptUtil.matches("changed",
-      User.<User>findById(0L).await().indefinitely().password)
-    );
+      VertxContextSupport.subscribeAndAwait(() -> Panache.withSession(() -> User.<User>findById(0L))).password));
   }
 
   @Test

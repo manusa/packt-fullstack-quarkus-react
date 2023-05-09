@@ -1,8 +1,12 @@
 package com.example.fullstack.task;
 
 import com.example.fullstack.user.User;
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
+import io.quarkus.test.vertx.RunOnVertxContext;
+import io.quarkus.test.vertx.UniAsserter;
+import io.quarkus.vertx.VertxContextSupport;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
@@ -94,23 +98,30 @@ class TaskResourceTest {
 
   @Test
   @TestSecurity(user = "user", roles = "user")
-  void updateForbidden() {
-    final User admin = User.<User>findById(0L).await().indefinitely();
-    Task adminTask = new Task();
-    adminTask.title = "admins-task";
-    adminTask.user = admin;
-    adminTask = adminTask.<Task>persistAndFlush().await().indefinitely();
-    given()
-      .body("{\"title\":\"to-update\"}")
-      .contentType(ContentType.JSON)
-      .when().put("/api/v1/tasks/" + adminTask.id)
-      .then()
-      .statusCode(401); // TODO: TaskService UnauthorizedException should be changed to ForbiddenException
+  @RunOnVertxContext
+  void updateForbidden(UniAsserter uniAsserter) {
+    uniAsserter.assertThat(() ->
+        Panache.withSession(() -> User.<User>findById(0L).chain(admin -> {
+            Task task = new Task();
+            task.title = "admins-task";
+            task.user = admin;
+            return task.<Task>persistAndFlush();
+          })
+        ),
+      adminTask -> {
+        given()
+          .body("{\"title\":\"to-update\"}")
+          .contentType(ContentType.JSON)
+          .when().put("/api/v1/tasks/" + adminTask.id)
+          .then()
+          .statusCode(401); // TODO: TaskService UnauthorizedException should be changed to ForbiddenException
+      }
+    );
   }
 
   @Test
   @TestSecurity(user = "user", roles = "user")
-  void delete() {
+  void delete() throws Throwable {
     var toDelete = given()
       .body("{\"title\":\"to-delete\"}")
       .contentType(ContentType.JSON)
@@ -119,12 +130,14 @@ class TaskResourceTest {
       .when().delete("/api/v1/tasks/" + toDelete.id)
       .then()
       .statusCode(204);
-    assertThat(Task.findById(toDelete.id).await().indefinitely(), nullValue());
+    assertThat(
+      VertxContextSupport.subscribeAndAwait(() -> Panache.withSession(() -> Task.findById(toDelete.id))),
+      nullValue());
   }
 
   @Test
   @TestSecurity(user = "user", roles = "user")
-  void setComplete() {
+  void setComplete() throws Throwable {
     var toSetComplete = given()
       .body("{\"title\":\"to-set-complete\"}")
       .contentType(ContentType.JSON)
@@ -135,7 +148,8 @@ class TaskResourceTest {
       .when().put("/api/v1/tasks/" + toSetComplete.id + "/complete")
       .then()
       .statusCode(200);
-    assertThat(Task.findById(toSetComplete.id).await().indefinitely(),
+    assertThat(
+      VertxContextSupport.subscribeAndAwait(() -> Panache.withSession(() -> Task.findById(toSetComplete.id))),
       allOf(
         hasProperty("complete", notNullValue()),
         hasProperty("version", is(toSetComplete.version + 1))
